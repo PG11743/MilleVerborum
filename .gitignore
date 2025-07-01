@@ -1,0 +1,54 @@
+# Node modules
+node_modules/
+
+# macOS
+.DS_Store
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+expo-debug.log
+
+# OS files
+Thumbs.db
+
+# dotenv
+.env
+.env.*
+
+# Expo
+.expo/
+.expo-shared/
+
+# Babel and Metro bundler cache
+babel.config.js
+metro.config.js
+
+# Android build
+android/.gradle/
+android/app/build/
+android/.idea/
+android/local.properties
+
+# iOS build
+ios/build/
+ios/Pods/
+ios/Podfile.lock
+ios/Podfile~
+
+# Xcode stuff
+*.xcworkspace
+*.xcuserstate
+*.xcuserdata/
+
+# Watches and temp
+*.swp
+*.lock
+tmp/
+
+# Testing
+coverage/
+
+# VSCode
+.vscode/
