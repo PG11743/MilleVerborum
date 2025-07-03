@@ -1,5 +1,6 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, Pressable } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import { useRouter } from 'expo-router';
 
 type Item = {
     id:         string;
@@ -12,6 +13,8 @@ type Props = {
 }
 
 export default function ActiveLanguage({item, onDelete} : Props) {
+    const router = useRouter();
+
     const renderRightActions = () => (
         <TouchableOpacity
             style={styles.deleteAction}
@@ -21,11 +24,15 @@ export default function ActiveLanguage({item, onDelete} : Props) {
         </TouchableOpacity>
     );
 
+    const pressAction = () => {
+        router.push('/StagingScreen');
+    };
+
     return (
         <Swipeable renderRightActions={renderRightActions}>
-            <View style={styles.itemContainer}>
+            <Pressable onPress={pressAction} style={styles.itemContainer}>
                 <Text>{item.title}</Text>
-            </View>
+            </Pressable>
         </Swipeable>
     );
 }
