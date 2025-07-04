@@ -1,6 +1,6 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Pressable, StyleSheet, Text } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp, LinearTransition } from 'react-native-reanimated';
-import { useState, useEffect } from 'react';
 
 type StageMode = 'level' | 'fail' | 'active';
 
@@ -40,7 +40,7 @@ export default function ActiveDisplay({setStageMode, levelCounter} : Props) {
     // }
 
     return (
-        <Pressable onPress={() => {}} style={styles.container}>
+        <Pressable onPress={() =>setShowSubtext(true)} style={styles.container}>
             {showAllText && (
             <Animated.View
                 style={styles.nativeBox}

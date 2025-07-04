@@ -1,6 +1,6 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Animated, { FadeInUp, FadeOutUp, LinearTransition } from 'react-native-reanimated';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Pressable, StyleSheet, Text } from 'react-native';
+import Animated, { FadeInUp, FadeOutUp, LinearTransition, runOnJS } from 'react-native-reanimated';
 
 type StageMode = 'level' | 'fail' | 'active';
 
@@ -28,7 +28,6 @@ export default function LevelDisplay({setStageMode, levelCounter} : Props) {
         const outroTimer = setTimeout(() => {
             if (showAllText) {
                 setShowAllText(false);
-                setStageMode('active');
             }
         }, 5000);
 
@@ -40,7 +39,6 @@ export default function LevelDisplay({setStageMode, levelCounter} : Props) {
             setShowSubtext(true);
         } else {
             setShowAllText(false);
-            setStageMode('active');
         }
     }
 
@@ -50,7 +48,7 @@ export default function LevelDisplay({setStageMode, levelCounter} : Props) {
             <Animated.View
                 style={styles.levelBox}
                 layout={LinearTransition.springify().damping(0)}
-                exiting={FadeOutUp.duration(400)}
+                exiting={FadeOutUp.duration(400).withCallback(() => {runOnJS(setStageMode)('active');})}
             >
                 <Text style={styles.text}>
                     Level {levelCounter}

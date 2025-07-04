@@ -1,7 +1,7 @@
-import { View, Text, StyleSheet } from 'react-native';
-import { useState } from 'react';
-import LevelDisplay from '@/components/LevelDisplay';
 import ActiveDisplay from '@/components/ActiveDisplay';
+import LevelDisplay from '@/components/LevelDisplay';
+import { useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 type StageMode = 'level' | 'fail' | 'active';
 
