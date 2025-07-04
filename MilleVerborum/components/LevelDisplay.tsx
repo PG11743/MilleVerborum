@@ -1,18 +1,24 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp, LinearTransition } from 'react-native-reanimated';
 import { useState, useEffect } from 'react';
+
+type StageMode = 'level' | 'fail' | 'active';
+
 type Props = {
-    progressStage:  () => void
+    stageMode: StageMode;
+    setStageMode:  React.Dispatch<React.SetStateAction<StageMode>>;
     levelCounter:   number
 };
 
-export default function LevelDisplay({progressStage, levelCounter} : Props) {
+export default function LevelDisplay({setStageMode, levelCounter} : Props) {
     const [showSubtext, setShowSubtext] = useState<boolean>(false);
     const [showAllText, setShowAllText] = useState<boolean>(true);
 
     useEffect(() => {
         const introTimer = setTimeout(() => {
-            setShowSubtext(true);
+            if (!showSubtext) {
+                setShowSubtext(true);
+            }
         }, 1500);
 
         return () => clearTimeout(introTimer);
@@ -20,7 +26,10 @@ export default function LevelDisplay({progressStage, levelCounter} : Props) {
 
     useEffect(() => {
         const outroTimer = setTimeout(() => {
-            setShowAllText(false);
+            if (showAllText) {
+                setShowAllText(false);
+                setStageMode('active');
+            }
         }, 5000);
 
         return () => clearTimeout(outroTimer);
@@ -31,7 +40,7 @@ export default function LevelDisplay({progressStage, levelCounter} : Props) {
             setShowSubtext(true);
         } else {
             setShowAllText(false);
-            progressStage();
+            setStageMode('active');
         }
     }
 
