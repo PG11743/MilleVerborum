@@ -1,5 +1,6 @@
 import ActiveLanguage from '@/components/ActiveLanguage';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
+import { StyleSheet } from 'react-native';
 
 export default function LanguageScreen() {
     return (
@@ -11,8 +12,8 @@ export default function LanguageScreen() {
     );
 }
 
-const styles = {
+const styles = StyleSheet.create({
     scrollBox: {
         borderWidth: 2
     }
-}
+});
