@@ -1,15 +1,15 @@
-import { StyleSheet, Text, TouchableOpacity, Pressable } from 'react-native';
-import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { useRouter } from 'expo-router';
+import { Pressable, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 
 type Item = {
-    id:         string;
+    id:         number;
     title:      string;
 };
 
 type Props = {
     item:       Item;
-    onDelete:   (id: string) => void;
+    onDelete:   (id: number) => void;
 }
 
 export default function ActiveLanguage({item, onDelete} : Props) {
