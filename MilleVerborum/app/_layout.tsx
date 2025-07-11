@@ -6,6 +6,7 @@ export default function RootLayout() {
       <Stack.Screen name="index" options={{ title: 'Home' }} />
       <Stack.Screen name="LanguageScreen" options={{ title: 'Select Language'}} />
       <Stack.Screen name="StagingScreen" options={{ title: ''}} />
+      <Stack.Screen name="LanguageSelect" options={{ title: 'Add Language', presentation: 'modal' }} />
     </Stack>    
   );
 }

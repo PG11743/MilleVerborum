@@ -1,10 +1,10 @@
 import ActiveLanguage from '@/components/ActiveLanguage';
 import { openLanguageDatabase } from '@/db/openDatabase';
-import { Link } from 'expo-router';
 import LottieView from 'lottie-react-native';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
+
 
 // This won't really do anything but show the dev what the types should be, since TypeScript can't tell at compile time whether this is correct.
 type LangRowType = {
@@ -15,7 +15,7 @@ type LangRowType = {
 async function getActiveLanguages (setLanguages : Function, setLoading : Function) {
     try{
         const db = await openLanguageDatabase();
-        const result = await db.getAllAsync("SELECT lang_id, lang_name FROM languages where curr_level IS NOT NULL;");
+        const result = await db.getAllAsync("SELECT lang_id, lang_name FROM languages;");
         setLanguages(result);
         setLoading(false);
     } catch (error) {
@@ -23,7 +23,7 @@ async function getActiveLanguages (setLanguages : Function, setLoading : Functio
     }    
 };
 
-export default function LanguageScreen() {
+export default function LanguageSelect() {
 
     const [languages, setLanguages] = useState<LangRowType[]>([]);
     const [loading, setLoading] = useState<Boolean>(true);
@@ -54,9 +54,6 @@ export default function LanguageScreen() {
                             ))
                         }
                     </ScrollView>
-                    <View style={styles.linkBox}>
-                        <Link href="/LanguageSelect" style={styles.link}>Add language</Link>
-                    </View>
                 </View>
             )}
         </GestureHandlerRootView>
