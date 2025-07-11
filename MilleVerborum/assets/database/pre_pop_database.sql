@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS words (
     word_rank       INTEGER     NOT NULL,
     native_word     TEXT        NOT NULL,
     foreign_word    TEXT        NOT NULL,
-    pronunciation   TEXT        NOT NULL,
+    pronunciation   TEXT        ,
     corr_count      INTEGER     NOT NULL,
     fail_count      INTEGER     NOT NULL,
     FOREIGN KEY (lang_id) REFERENCES languages (lang_id),
