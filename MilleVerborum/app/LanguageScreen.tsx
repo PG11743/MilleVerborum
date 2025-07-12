@@ -1,10 +1,10 @@
-import ActiveLanguage from '@/components/ActiveLanguage';
+import LanguageListItem from '@/components/LanguageListItem';
 import { openLanguageDatabase } from '@/db/openDatabase';
-import { Link } from 'expo-router';
 import LottieView from 'lottie-react-native';
 import { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
+import { StyleSheet, Text, View } from 'react-native';
+import { GestureHandlerRootView, Pressable, ScrollView } from 'react-native-gesture-handler';
+import LanguageSelect from './LanguageSelect';
 
 // This won't really do anything but show the dev what the types should be, since TypeScript can't tell at compile time whether this is correct.
 type LangRowType = {
@@ -26,7 +26,8 @@ async function getActiveLanguages (setLanguages : Function, setLoading : Functio
 export default function LanguageScreen() {
 
     const [languages, setLanguages] = useState<LangRowType[]>([]);
-    const [loading, setLoading] = useState<Boolean>(true);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [isModalVisible, setModalVisibility] = useState<boolean>(false);
 
     useEffect(() => {
         (async () => {
@@ -50,15 +51,18 @@ export default function LanguageScreen() {
                     <ScrollView>
                         {
                             languages.map((item) => (
-                                <ActiveLanguage key={item.lang_id} item={{id: item.lang_id, title: item.lang_name}} onDelete={(id: number)=>{}}/>
+                                <LanguageListItem key={item.lang_id} item={{id: item.lang_id, title: item.lang_name}} onDelete={(id: number)=>{}} activeOnly={true}/>
                             ))
                         }
                     </ScrollView>
-                    <View style={styles.linkBox}>
-                        <Link href="/LanguageSelect" style={styles.link}>Add language</Link>
-                    </View>
+                    <Pressable style={styles.modalBox} onPress={() =>(setModalVisibility(true))}>
+                        <View style={styles.modalButton}>
+                            <Text>Add language</Text>
+                        </View>
+                    </Pressable>
                 </View>
             )}
+            <LanguageSelect isModalVisible={isModalVisible} setModalVisibility={setModalVisibility}/>
         </GestureHandlerRootView>
     );
 }
@@ -69,21 +73,23 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    link: {
+    modalButton: {
         paddingTop: 20,
         paddingBottom: 20,
         paddingLeft: 30,
         paddingRight: 30,
         marginTop: 30,
         marginBottom: 30,
-        fontSize: 20,
         borderColor: 'black',
         borderWidth: 1,
         borderRadius: 20
     },
-    linkBox: {
+    modalBox: {
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 30
+    },
+    modalButtonText: {
+        fontSize: 20
     }
 });
