@@ -1,27 +1,27 @@
 import LanguageListItem from '@/components/LanguageListItem';
 import { openLanguageDatabase } from '@/db/openDatabase';
+import { LangRowType } from '@/types';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import LottieView from 'lottie-react-native';
 import { useEffect, useState } from 'react';
 import { Modal, StyleSheet, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
-
-// This won't really do anything but show the dev what the types should be, since TypeScript can't tell at compile time whether this is correct.
-type LangRowType = {
-    lang_id: number;
-    lang_name: string;
-};
-
 type Props = {
     isModalVisible: boolean;
     setModalVisibility: React.Dispatch<React.SetStateAction<boolean>>;
+    setActiveLanguages:   React.Dispatch<React.SetStateAction<LangRowType[]>>;
+    setActiveLoading:     React.Dispatch<React.SetStateAction<boolean>>;
+    getActiveLanguages: (
+        setLanguages:   React.Dispatch<React.SetStateAction<LangRowType[]>>,
+        setLoading:     React.Dispatch<React.SetStateAction<boolean>>
+    ) => Promise<void>;
 }
 
-async function getActiveLanguages(setLanguages: Function, setLoading: Function) {
+async function getInactiveLanguages(setLanguages: Function, setLoading: Function) {
     try {
         const db = await openLanguageDatabase();
-        const result = await db.getAllAsync("SELECT lang_id, lang_name FROM languages;");
+        const result = await db.getAllAsync("SELECT lang_id, lang_name FROM languages WHERE curr_level IS NULL;");
         setLanguages(result);
         setLoading(false);
     } catch (error) {
@@ -29,21 +29,21 @@ async function getActiveLanguages(setLanguages: Function, setLoading: Function) 
     }
 };
 
-export default function LanguageSelect({isModalVisible, setModalVisibility} : Props) {
+export default function LanguageSelect(props : Props) {
 
-    const [languages, setLanguages] = useState<LangRowType[]>([]);
-    const [loading, setLoading] = useState<Boolean>(true);
+    const [languages, setInactiveLanguages] = useState<LangRowType[]>([]);
+    const [loading, setInactiveLoading] = useState<boolean>(true);
 
     useEffect(() => {
         (async () => {
-            getActiveLanguages(setLanguages, setLoading);
+            getInactiveLanguages(setInactiveLanguages, setInactiveLoading);
         })();
     }, []);
 
     return (
         <Modal
         animationType="slide"
-        visible={isModalVisible}
+        visible={props.isModalVisible}
         transparent={true} // Make background see-through
         >
             <View style={styles.modalOverlay}>
@@ -65,7 +65,7 @@ export default function LanguageSelect({isModalVisible, setModalVisibility} : Pr
                                 name="close"
                                 size={22}
                                 color="#25292e"
-                                onPress={() => setModalVisibility(false)}
+                                onPress={() => props.setModalVisibility(false)}
                                 style={styles.closeIcon}
                             />
                         </View>
@@ -75,7 +75,13 @@ export default function LanguageSelect({isModalVisible, setModalVisibility} : Pr
                                     key={item.lang_id}
                                     item={{ id: item.lang_id, title: item.lang_name }}
                                     activeOnly={false}
-                                    setModalVisibility={setModalVisibility}
+                                    setModalVisibility={props.setModalVisibility}
+                                    setInactiveLoading={setInactiveLoading}
+                                    setInactiveLanguages={setInactiveLanguages}
+                                    getInactiveLanguages={() => getInactiveLanguages(setInactiveLanguages, setInactiveLoading)}
+                                    setActiveLoading={props.setActiveLoading}
+                                    setActiveLanguages={props.setActiveLanguages}
+                                    getActiveLanguages={() => props.getActiveLanguages(props.setActiveLanguages, props.setActiveLoading)}
                                 />
                             ))}
                         </ScrollView>

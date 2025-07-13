@@ -12,12 +12,12 @@ type LangRowType = {
     lang_name   :   string
 };
 
-async function getActiveLanguages (setLanguages : Function, setLoading : Function) {
+async function getActiveLanguages (setActiveLanguages : Function, setActiveLoading : Function) {
     try{
         const db = await openLanguageDatabase();
         const result = await db.getAllAsync("SELECT lang_id, lang_name FROM languages where curr_level IS NOT NULL;");
-        setLanguages(result);
-        setLoading(false);
+        setActiveLanguages(result);
+        setActiveLoading(false);
     } catch (error) {
         console.error("DB failed to open", error);
     }    
@@ -25,19 +25,19 @@ async function getActiveLanguages (setLanguages : Function, setLoading : Functio
 
 export default function LanguageScreen() {
 
-    const [languages, setLanguages] = useState<LangRowType[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+    const [activeLanguages, setActiveLanguages] = useState<LangRowType[]>([]);
+    const [activeLoading, setActiveLoading] = useState<boolean>(true);
     const [isModalVisible, setModalVisibility] = useState<boolean>(false);
 
     useEffect(() => {
         (async () => {
-            getActiveLanguages(setLanguages, setLoading);
+            getActiveLanguages(setActiveLanguages, setActiveLoading);
         })();
     }, []);
 
     return (
         <GestureHandlerRootView>
-            {loading ? (
+            {activeLoading ? (
                 <View style={styles.loadingBox}>
                     <LottieView
                         source={require('@/assets/animations/loading.json')}
@@ -50,7 +50,7 @@ export default function LanguageScreen() {
                 <View>
                     <ScrollView>
                         {
-                            languages.map((item) => (
+                            activeLanguages.map((item) => (
                                 <LanguageListItem key={item.lang_id} item={{id: item.lang_id, title: item.lang_name}} onDelete={(id: number)=>{}} activeOnly={true}/>
                             ))
                         }
@@ -62,7 +62,13 @@ export default function LanguageScreen() {
                     </Pressable>
                 </View>
             )}
-            <LanguageSelect isModalVisible={isModalVisible} setModalVisibility={setModalVisibility}/>
+            <LanguageSelect
+                isModalVisible={isModalVisible}
+                setModalVisibility={setModalVisibility}
+                getActiveLanguages={getActiveLanguages}
+                setActiveLanguages={setActiveLanguages}
+                setActiveLoading={setActiveLoading}
+            />
         </GestureHandlerRootView>
     );
 }
