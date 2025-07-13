@@ -1,12 +1,11 @@
 import Card from '@/components/Card';
+import { StageMode } from '@/types';
 import { useCallback, useRef, useState } from 'react';
 import { StyleSheet, View, type ImageSourcePropType } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { Swiper, type SwiperCardRefType } from 'rn-swiper-list';
 
-
-type StageMode = 'level' | 'fail' | 'active';
 
 type Props = {
     stageMode: StageMode;

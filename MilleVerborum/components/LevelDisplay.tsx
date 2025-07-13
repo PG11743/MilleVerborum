@@ -1,18 +1,42 @@
+import { openLanguageDatabase } from '@/db/openDatabase';
+import { LangRowType, StageMode } from '@/types';
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp, LinearTransition, runOnJS } from 'react-native-reanimated';
 
-type StageMode = 'level' | 'fail' | 'active';
-
 type Props = {
-    stageMode: StageMode;
-    setStageMode:  React.Dispatch<React.SetStateAction<StageMode>>;
-    levelCounter:   number
+    stageMode:      StageMode;
+    setStageMode:   React.Dispatch<React.SetStateAction<StageMode>>;
+    langId:         LangRowType["lang_id"]
 };
 
-export default function LevelDisplay({setStageMode, levelCounter} : Props) {
+async function getLevelData (
+    langId:             LangRowType["lang_id"],
+    setLevelCounter:    React.Dispatch<React.SetStateAction<LangRowType["lang_level"]>>
+) {
+    console.log('running getLevelData...');
+    try{
+        const db = await openLanguageDatabase();
+        const result = await db.getFirstAsync<{curr_level: number}>('SELECT curr_level FROM languages WHERE lang_id = $lang_id', {$lang_id: langId});
+        if (result) {
+            setLevelCounter(result.curr_level);
+        } else {
+            console.error('level counter is set to 0, user shouldn\'t be here');
+        }
+    } catch (error) {
+        console.error("DB failed to open", error);
+    }
+}
+
+
+export default function LevelDisplay(props : Props) {
     const [showSubtext, setShowSubtext] = useState<boolean>(false);
     const [showAllText, setShowAllText] = useState<boolean>(true);
+    const [levelCounter, setLevelCounter] = useState<LangRowType["lang_level"]>(null);
+
+    useEffect(() => {
+        getLevelData(props.langId, setLevelCounter);
+    }, []);
 
     useEffect(() => {
         const introTimer = setTimeout(() => {
@@ -44,11 +68,11 @@ export default function LevelDisplay({setStageMode, levelCounter} : Props) {
 
     return (
         <Pressable onPress={skip} style={styles.container}>
-            {showAllText && (
+            {(showAllText && levelCounter) && (
             <Animated.View
                 style={styles.levelBox}
                 layout={LinearTransition.springify().damping(0)}
-                exiting={FadeOutUp.duration(400).withCallback(() => {runOnJS(setStageMode)('active');})}
+                exiting={FadeOutUp.duration(400).withCallback(() => {runOnJS(props.setStageMode)('active');})}
             >
                 <Text style={styles.text}>
                     Level {levelCounter}

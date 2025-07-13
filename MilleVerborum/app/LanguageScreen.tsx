@@ -55,7 +55,6 @@ export default function LanguageScreen() {
                     </ScrollView>
                     <Pressable style={styles.modalBox} onPress={
                         () =>{
-                            console.log('opening modal...');
                             setModalVisibility(true);
                         }}
                     >

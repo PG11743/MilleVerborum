@@ -79,7 +79,7 @@ export default function LanguageListItem(props : Props) {
                     </TouchableOpacity>
                     )}
                 >
-                    <Pressable onPress={() => {router.push('/StagingScreen');}} style={styles.itemContainer}>
+                    <Pressable onPress={() => {router.push({pathname: '/StagingScreen', params: {lang_id: props.item.lang_id}});}} style={styles.itemContainer}>
                         <Text>{props.item.lang_name}</Text>
                     </Pressable>
                 </Swipeable>
