@@ -72,7 +72,7 @@ export default function LevelDisplay(props : Props) {
             <Animated.View
                 style={styles.levelBox}
                 layout={LinearTransition.springify().damping(0)}
-                exiting={FadeOutUp.duration(400).withCallback(() => {runOnJS(props.setStageMode)('active');})}
+                exiting={FadeOutUp.duration(400).withCallback(() => {runOnJS(props.setStageMode)('practice');})}
             >
                 <Text style={styles.text}>
                     Level {levelCounter}

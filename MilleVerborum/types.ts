@@ -7,4 +7,4 @@ export type LangRowType = {
     lang_level?:    number | null;
 };
 
-export type StageMode = 'level' | 'fail' | 'active';
+export type StageMode = 'level' | 'fail' | 'practice' | 'train' | 'test';

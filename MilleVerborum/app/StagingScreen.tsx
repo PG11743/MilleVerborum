@@ -1,4 +1,4 @@
-import ActiveDisplay from '@/components/ActiveDisplay';
+import DeckDisplay from '@/components/DeckDisplay';
 import LevelDisplay from '@/components/LevelDisplay';
 import { LangRowType, StageMode } from '@/types';
 import { useLocalSearchParams } from 'expo-router';
@@ -19,9 +19,9 @@ function renderStage(
     langId:         LangRowType["lang_id"]
 ) {
     switch (stageMode) {
-        case    'active':
-            console.log('opening active display');
-            return <ActiveDisplay stageMode={stageMode} setStageMode={setStageMode} levelCounter={2}/>
+        case    'practice':
+            console.log('opening practice display');
+            return <DeckDisplay stageMode={stageMode} setStageMode={setStageMode} langId={langId}/>
         case    'fail':
             return <Text>fail display</Text>;
         default:
