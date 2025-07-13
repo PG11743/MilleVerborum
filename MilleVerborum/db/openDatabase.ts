@@ -9,7 +9,7 @@ export async function openLanguageDatabase(): Promise<SQLiteDatabase> {
     // console.log('entered async function openLanguageDatabase...');
     const sqliteFolder = `${FileSystem.documentDirectory}SQLite`;
     const dbPath = `${sqliteFolder}/${DB_NAME}`;
-    console.log('dbPath is said to be: ', dbPath);
+    // console.log('dbPath is said to be: ', dbPath);
     const fileInfo = await FileSystem.getInfoAsync(dbPath);
     if (!fileInfo.exists) {
         const asset = Asset.fromModule(require('@/assets/database/milleverborum.db'));
@@ -27,6 +27,6 @@ export async function openLanguageDatabase(): Promise<SQLiteDatabase> {
     }
                 
 
-    return await openDatabaseAsync(DB_NAME, undefined, sqliteFolder);
+    return await openDatabaseAsync(DB_NAME);
     // return await openDatabaseAsync(dbPath.replace('file://', ''));
 }

@@ -1,16 +1,12 @@
 import LanguageListItem from '@/components/LanguageListItem';
 import { openLanguageDatabase } from '@/db/openDatabase';
+import { LangRowType } from '@/types';
 import LottieView from 'lottie-react-native';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView, Pressable, ScrollView } from 'react-native-gesture-handler';
 import LanguageSelect from './LanguageSelect';
 
-// This won't really do anything but show the dev what the types should be, since TypeScript can't tell at compile time whether this is correct.
-type LangRowType = {
-    lang_id     :   number,
-    lang_name   :   string
-};
 
 async function getActiveLanguages (setActiveLanguages : Function, setActiveLoading : Function) {
     try{
@@ -25,19 +21,21 @@ async function getActiveLanguages (setActiveLanguages : Function, setActiveLoadi
 
 export default function LanguageScreen() {
 
-    const [activeLanguages, setActiveLanguages] = useState<LangRowType[]>([]);
-    const [activeLoading, setActiveLoading] = useState<boolean>(true);
+    const [languages, setLanguages] = useState<LangRowType[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
     const [isModalVisible, setModalVisibility] = useState<boolean>(false);
 
     useEffect(() => {
-        (async () => {
-            getActiveLanguages(setActiveLanguages, setActiveLoading);
-        })();
-    }, []);
+        if (!isModalVisible) {
+            (async () => {
+                getActiveLanguages(setLanguages, setLoading);
+            })();
+        }
+    }, [isModalVisible, loading]);
 
     return (
         <GestureHandlerRootView>
-            {activeLoading ? (
+            {loading ? (
                 <View style={styles.loadingBox}>
                     <LottieView
                         source={require('@/assets/animations/loading.json')}
@@ -50,12 +48,17 @@ export default function LanguageScreen() {
                 <View>
                     <ScrollView>
                         {
-                            activeLanguages.map((item) => (
-                                <LanguageListItem key={item.lang_id} item={{id: item.lang_id, title: item.lang_name}} onDelete={(id: number)=>{}} activeOnly={true}/>
+                            languages.map((item) => (
+                                <LanguageListItem key={item.lang_id} item={{lang_id: item.lang_id, lang_name: item.lang_name}} setActiveLoading={setLoading} activeOnly={true}/>
                             ))
                         }
                     </ScrollView>
-                    <Pressable style={styles.modalBox} onPress={() =>(setModalVisibility(true))}>
+                    <Pressable style={styles.modalBox} onPress={
+                        () =>{
+                            console.log('opening modal...');
+                            setModalVisibility(true);
+                        }}
+                    >
                         <View style={styles.modalButton}>
                             <Text>Add language</Text>
                         </View>
@@ -65,9 +68,6 @@ export default function LanguageScreen() {
             <LanguageSelect
                 isModalVisible={isModalVisible}
                 setModalVisibility={setModalVisibility}
-                getActiveLanguages={getActiveLanguages}
-                setActiveLanguages={setActiveLanguages}
-                setActiveLoading={setActiveLoading}
             />
         </GestureHandlerRootView>
     );

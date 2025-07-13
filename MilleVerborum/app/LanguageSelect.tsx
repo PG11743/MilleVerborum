@@ -10,12 +10,6 @@ import { ScrollView } from 'react-native-gesture-handler';
 type Props = {
     isModalVisible: boolean;
     setModalVisibility: React.Dispatch<React.SetStateAction<boolean>>;
-    setActiveLanguages:   React.Dispatch<React.SetStateAction<LangRowType[]>>;
-    setActiveLoading:     React.Dispatch<React.SetStateAction<boolean>>;
-    getActiveLanguages: (
-        setLanguages:   React.Dispatch<React.SetStateAction<LangRowType[]>>,
-        setLoading:     React.Dispatch<React.SetStateAction<boolean>>
-    ) => Promise<void>;
 }
 
 async function getInactiveLanguages(setLanguages: Function, setLoading: Function) {
@@ -31,14 +25,16 @@ async function getInactiveLanguages(setLanguages: Function, setLoading: Function
 
 export default function LanguageSelect(props : Props) {
 
-    const [languages, setInactiveLanguages] = useState<LangRowType[]>([]);
-    const [loading, setInactiveLoading] = useState<boolean>(true);
+    const [languages, setLanguages] = useState<LangRowType[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        (async () => {
-            getInactiveLanguages(setInactiveLanguages, setInactiveLoading);
-        })();
-    }, []);
+        if (props.isModalVisible) {
+            (async () => {
+                getInactiveLanguages(setLanguages, setLoading);
+            })();
+        }
+    }, [props.isModalVisible]);
 
     return (
         <Modal
@@ -73,15 +69,10 @@ export default function LanguageSelect(props : Props) {
                             {languages.map((item) => (
                                 <LanguageListItem
                                     key={item.lang_id}
-                                    item={{ id: item.lang_id, title: item.lang_name }}
+                                    item={{ lang_id: item.lang_id, lang_name: item.lang_name }}
                                     activeOnly={false}
                                     setModalVisibility={props.setModalVisibility}
-                                    setInactiveLoading={setInactiveLoading}
-                                    setInactiveLanguages={setInactiveLanguages}
-                                    getInactiveLanguages={() => getInactiveLanguages(setInactiveLanguages, setInactiveLoading)}
-                                    setActiveLoading={props.setActiveLoading}
-                                    setActiveLanguages={props.setActiveLanguages}
-                                    getActiveLanguages={() => props.getActiveLanguages(props.setActiveLanguages, props.setActiveLoading)}
+                                    setInactiveLoading={setLoading}
                                 />
                             ))}
                         </ScrollView>
@@ -136,6 +127,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     centered: {
+        flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
     },
