@@ -38,9 +38,9 @@ export default function LanguageSelect(props : Props) {
 
     return (
         <Modal
-        animationType="slide"
-        visible={props.isModalVisible}
-        transparent={true} // Make background see-through
+            animationType="slide"
+            visible={props.isModalVisible}
+            transparent={true} // Make background see-through
         >
             <View style={styles.modalOverlay}>
                 <View style={styles.modalContainer}>
