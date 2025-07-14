@@ -1,6 +1,7 @@
 import Card from '@/components/Card';
 import { openLanguageDatabase } from '@/db/openDatabase';
 import { LangRowType, StageMode } from '@/types';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View, type ImageSourcePropType } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -61,25 +62,31 @@ async function getCardData (
     }
 }
 
-function resetDeck(
+async function resetDeck(
     setFinishedDeck:    React.Dispatch<React.SetStateAction<boolean>>,
     wordData:           Translation[],
     setWordData:        React.Dispatch<React.SetStateAction<Translation[]>>,
     ref:                React.RefObject<SwiperCardRefType | null>
 ) {
-    const tempData = wordData;
-    for (let i = tempData.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [tempData[i], tempData[j]] = [tempData[j], tempData[i]];
-    }
+    console.log('data in wordData: ', wordData);
+    // const tempData = wordData;
+    // for (let i = tempData.length - 1; i > 0; i--) {
+    //     const j = Math.floor(Math.random() * (i + 1));
+    //     [tempData[i], tempData[j]] = [tempData[j], tempData[i]];
+    // }
 
-    setWordData(tempData.map(row => ({
-        wordId: row.wordId,
-        nativeWord: row.nativeWord,
-        foreignWord: row.foreignWord
-    })));
-
+    // setWordData(tempData.map(row => ({
+    //     wordId: row.wordId,
+    //     nativeWord: row.nativeWord,
+    //     foreignWord: row.foreignWord
+    // })));
     setFinishedDeck(false);
+
+    for (let i = 0; i < wordData.length; i++) {
+        ref.current?.swipeBack();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        // console.log(ref.current);
+    }
 }
 
 export default function DeckDisplay(props : Props) {
@@ -203,10 +210,17 @@ export default function DeckDisplay(props : Props) {
                 {finishedDeck && (
                     <Animated.View
                         entering={FadeInUp.duration(400)}
+                        style={styles.practiceEndContainer}
                     >
-                        <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, ref)}>
-                            <Text>Go again</Text>
+                        <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, ref)} style={styles.practicePressable}>
+                            <FontAwesome name="undo" size={30} color="#000000ff" style={styles.resetButton}/>
+                            <Text style={styles.text}>Reset</Text>
                         </Pressable>
+                        <Pressable onPress={() => console.log('beginning training...')} style={styles.practicePressable}>
+                            <FontAwesome name="arrow-right" size={30} color="#000000ff" style={styles.resetButton}/>
+                            <Text style={styles.text}>Begin Training</Text>
+                        </Pressable>
+
                     </Animated.View>
                 )}                
             </Animated.View>
@@ -277,10 +291,32 @@ container: {
     width: '90%',
   },
   text: {
-    color: '#001a72',
+    color: '#000000ff',
+    fontSize: 30
   },
   overlayLabelContainerStyle: {
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  practiceEndContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 200
+  },
+  practicePressable: {
+        borderRadius: 10,
+        margin: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        borderWidth: 1
+  },
+  resetButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 10
   }
 });
