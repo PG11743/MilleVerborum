@@ -62,6 +62,32 @@ function renderIntermission(
                     </Animated.View>
                 )
             );
+        case    'test':
+            return (
+                (showAllText && levelCounter) && (
+                    <Animated.View
+                        style={styles.levelBox}
+                        layout={LinearTransition.springify().damping(0)}
+                        exiting={FadeOutUp.duration(400).withCallback(() => {
+                            runOnJS(setVisibility)(false);
+                        })}
+                        entering={FadeInUp.duration(400)}
+                    >
+                        <Text style={styles.text}>
+                            Level {levelCounter} Test Round
+                        </Text>
+                        {showSubtext && (
+                        <Animated.View
+                            entering={FadeInUp.duration(400)}
+                        >
+                            <Text style={styles.subtext}>
+                                Complete 100% of all words to reach level {levelCounter + 1}
+                            </Text>
+                        </Animated.View>
+                        )}
+                    </Animated.View>
+                )
+            );
         default:
             return (
                 (showAllText && levelCounter) && (

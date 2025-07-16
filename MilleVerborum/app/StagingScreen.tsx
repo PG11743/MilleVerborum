@@ -1,4 +1,5 @@
 import PracticeDeck from '@/components/PracticeDeck';
+import TestDeck from '@/components/TestDeck';
 import TrainDeck from '@/components/TrainDeck';
 import { LangRowType, StageMode } from '@/types';
 import { useLocalSearchParams } from 'expo-router';
@@ -27,6 +28,10 @@ function renderStage(
             console.log('opening training display');
             // return <DeckDisplay stageMode={stageMode} setStageMode={setStageMode} langId={langId}/>
             return <TrainDeck langId={langId} setStageMode={setStageMode} stageMode={stageMode} />
+        case    'test':
+            console.log('opening test display');
+            // return <DeckDisplay stageMode={stageMode} setStageMode={setStageMode} langId={langId}/>
+            return <TestDeck langId={langId} setStageMode={setStageMode} stageMode={stageMode} />
         case    'fail':
             return <Text>fail display</Text>;
         default:

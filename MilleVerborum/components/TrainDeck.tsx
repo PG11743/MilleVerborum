@@ -5,7 +5,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import Animated, { FadeInUp, FadeOutUp, runOnJS } from 'react-native-reanimated';
+import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
 import { Swiper, type SwiperCardRefType } from 'rn-swiper-list';
 import IntermissionDisplay from './IntermissionDisplay';
 
@@ -31,8 +31,6 @@ async function getCardData (
     try{
         const db = await openLanguageDatabase();
         const result = await db.getFirstAsync<{curr_level: number}>('SELECT curr_level FROM languages WHERE lang_id = $lang_id', {$lang_id: langId});
-        // console.log('results from language interrogation:');
-        // console.log(result);
         if (result) {
             const wordRows = await db.getAllAsync<{word_id: number, native_word: string, foreign_word: string}>('SELECT word_id, native_word, foreign_word FROM words WHERE lang_id = $lang_id AND word_rank BETWEEN $lower_range AND $higher_range', {$lang_id: langId, $lower_range: (result.curr_level * 10)-9, $higher_range: (result.curr_level * 10)});
 
@@ -56,38 +54,32 @@ async function getCardData (
 }
 
 async function resetDeck(
-    setFinishedDeck:    React.Dispatch<React.SetStateAction<boolean>>,
-    wordData:           Translation[],
-    setWordData:        React.Dispatch<React.SetStateAction<Translation[]>>,
-    ref:                React.RefObject<SwiperCardRefType | null>
+    setFinishedDeck:        React.Dispatch<React.SetStateAction<boolean>>,
+    wordData:               Translation[],
+    setWordData:            React.Dispatch<React.SetStateAction<Translation[]>>,
+    setDeckKey:             React.Dispatch<React.SetStateAction<number>>
 ) {
-    // console.log('data in wordData: ', wordData);
-    // const tempData = wordData;
-    // for (let i = tempData.length - 1; i > 0; i--) {
-    //     const j = Math.floor(Math.random() * (i + 1));
-    //     [tempData[i], tempData[j]] = [tempData[j], tempData[i]];
-    // }
+    const tempData = [...wordData];
+    for (let i = tempData.length - 1; i >= 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [tempData[i], tempData[j]] = [tempData[j], tempData[i]];
+    }
 
-    // setWordData(tempData.map(row => ({
-    //     wordId: row.wordId,
-    //     nativeWord: row.nativeWord,
-    //     foreignWord: row.foreignWord
-    // })));
     setFinishedDeck(false);
 
-    for (let i = 0; i < wordData.length; i++) {
-        ref.current?.swipeBack();
-        await new Promise((resolve) => setTimeout(resolve, 50));
-        // console.log(ref.current);
-    }
-}
-
-
+    setTimeout(() => {
+        setWordData(tempData);
+        setDeckKey(prevDeckKey => prevDeckKey + 1);
+    }, 400);
+}       
 
 export default function TrainDeck(props : Props) {
     const [wordData, setWordData] = useState<Translation[]>([]);
     const [finishedDeck, setFinishedDeck] = useState<boolean>(false);
+    const [exitingDeck, setExitingDeck] = useState<boolean>(false);
     const [intermissionVisible, setIntermissionVisible] = useState<boolean>(true);
+    const [deckKey, setDeckKey] = useState<number>(0);
+
     console.log('running TrainDeck');
 
     const ref = useRef<SwiperCardRefType>(null);
@@ -160,30 +152,28 @@ export default function TrainDeck(props : Props) {
                             OverlayLabelLeft={OverlayLabelLeft}
                             onSwipedAll={() => { if (wordData.length != 0) {setFinishedDeck(true)}}}
                         />
-                        {finishedDeck && (
+                        {(finishedDeck && !exitingDeck) && (
                             <Animated.View
                                 entering={FadeInUp.duration(400)}
-                                exiting={FadeOutUp.duration(400).withCallback(() => {runOnJS(props.setStageMode)('test')})}
-                                style={styles.TrainEndContainer}
+                                exiting={FadeOutUp.duration(400)}
+                                style={styles.trainEndContainer}
                             >
-                                <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, ref)} style={styles.TrainPressable}>
+                                <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, setDeckKey)} style={styles.trainPressable}>
                                     <FontAwesome name="undo" size={30} color="#000000ff" style={styles.resetButton}/>
-                                    <Text style={styles.text}>Reset</Text>
+                                    <Text style={styles.text}>Retry</Text>
                                 </Pressable>
                                 <Pressable
-                                    onPress={
-                                        () => {
-                                            console.log('hiding Train buttons');
-                                            // props.setStageMode('train');
-                                            setFinishedDeck(false);
+                                    onPress={() => {
+                                        setExitingDeck(true);
+                                        setTimeout(() => {
+                                            props.setStageMode('test');
+                                        }, 400)
                                         }
                                     }
-                                    style={
-                                        styles.TrainPressable
-                                    }
+                                    style={styles.trainPressable}
                                 >
                                     <FontAwesome name="arrow-right" size={30} color="#000000ff" style={styles.resetButton}/>
-                                    <Text style={styles.text}>Begin Training</Text>
+                                    <Text style={styles.text}>Attempt Promotion</Text>
                                 </Pressable>
                             </Animated.View>
                         )}
@@ -233,13 +223,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  TrainEndContainer: {
+  trainEndContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 200
   },
-  TrainPressable: {
+  trainPressable: {
         borderRadius: 10,
         margin: 10,
         paddingVertical: 10,

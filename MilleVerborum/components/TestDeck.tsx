@@ -3,7 +3,7 @@ import { openLanguageDatabase } from '@/db/openDatabase';
 import { LangRowType, StageMode } from '@/types';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
 import { Swiper, type SwiperCardRefType } from 'rn-swiper-list';
@@ -73,14 +73,14 @@ async function resetDeck(
     }, 400);
 }       
 
-export default function PracticeDeck(props : Props) {
+export default function TestDeck(props : Props) {
     const [wordData, setWordData] = useState<Translation[]>([]);
     const [finishedDeck, setFinishedDeck] = useState<boolean>(false);
     const [exitingDeck, setExitingDeck] = useState<boolean>(false);
     const [intermissionVisible, setIntermissionVisible] = useState<boolean>(true);
     const [deckKey, setDeckKey] = useState<number>(0);
 
-    console.log('running PracticeDeck');
+    console.log('running TestDeck');
 
     const ref = useRef<SwiperCardRefType>(null);
 
@@ -100,6 +100,31 @@ export default function PracticeDeck(props : Props) {
         );
     }, [wordData]);
 
+    const OverlayLabelRight = useCallback(() => {
+    return (
+        <View
+        style={[
+            styles.overlayLabelContainer,
+            {
+            backgroundColor: 'red',
+            },
+        ]}
+        />
+    );
+    }, []);
+    const OverlayLabelLeft = useCallback(() => {
+    return (
+        <View
+        style={[
+            styles.overlayLabelContainer,
+            {
+            backgroundColor: 'green',
+            },
+        ]}
+        />
+    );
+    }, []);
+    
 
     return (
         <GestureHandlerRootView>
@@ -110,7 +135,6 @@ export default function PracticeDeck(props : Props) {
                         style={styles.subContainer}
                         entering={FadeInUp.duration(400)}
                         exiting={FadeOutUp.duration(400)}
-                        key={deckKey}
                     >
                         <Swiper
                             ref={ref}
@@ -124,30 +148,32 @@ export default function PracticeDeck(props : Props) {
                             FlippedContent={renderFlippedCard}
                             disableBottomSwipe={true}
                             disableTopSwipe={true}
+                            OverlayLabelRight={OverlayLabelRight}
+                            OverlayLabelLeft={OverlayLabelLeft}
                             onSwipedAll={() => { if (wordData.length != 0) {setFinishedDeck(true)}}}
                         />
                         {(finishedDeck && !exitingDeck) && (
                             <Animated.View
                                 entering={FadeInUp.duration(400)}
                                 exiting={FadeOutUp.duration(400)}
-                                style={styles.practiceEndContainer}
+                                style={styles.testEndContainer}
                             >
-                                <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, setDeckKey)} style={styles.practicePressable}>
+                                <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, setDeckKey)} style={styles.testPressable}>
                                     <FontAwesome name="undo" size={30} color="#000000ff" style={styles.resetButton}/>
-                                    <Text style={styles.text}>Reset</Text>
+                                    <Text style={styles.text}>Retry</Text>
                                 </Pressable>
                                 <Pressable
                                     onPress={() => {
                                         setExitingDeck(true);
                                         setTimeout(() => {
-                                            props.setStageMode('train');
+                                            props.setStageMode('test');
                                         }, 400)
                                         }
                                     }
-                                    style={styles.practicePressable}
+                                    style={styles.testPressable}
                                 >
                                     <FontAwesome name="arrow-right" size={30} color="#000000ff" style={styles.resetButton}/>
-                                    <Text style={styles.text}>Begin Training</Text>
+                                    <Text style={styles.text}>Attempt Promotion</Text>
                                 </Pressable>
                             </Animated.View>
                         )}
@@ -197,13 +223,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  practiceEndContainer: {
+  testEndContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 200
   },
-  practicePressable: {
+  testPressable: {
         borderRadius: 10,
         margin: 10,
         paddingVertical: 10,
