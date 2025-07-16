@@ -1,6 +1,6 @@
 import Card from '@/components/Card';
 import { openLanguageDatabase } from '@/db/openDatabase';
-import { LangRowType, StageMode } from '@/types';
+import { LangRowType, StageMode, WordRowType } from '@/types';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -17,22 +17,17 @@ type Props = {
     setStageMode:   React.Dispatch<React.SetStateAction<StageMode>>;
 };
 
-type Translation = {
-    wordId:         number
-    nativeWord:     string,
-    foreignWord:    string
-};
 
 async function getCardData (
     langId:             LangRowType["lang_id"],
-    setWordData:        React.Dispatch<React.SetStateAction<Translation[]>>
+    setWordData:        React.Dispatch<React.SetStateAction<WordRowType[]>>
 ) {
     console.log('running getCardData...');
     try{
         const db = await openLanguageDatabase();
         const result = await db.getFirstAsync<{curr_level: number}>('SELECT curr_level FROM languages WHERE lang_id = $lang_id', {$lang_id: langId});
         if (result) {
-            const wordRows = await db.getAllAsync<{word_id: number, native_word: string, foreign_word: string}>('SELECT word_id, native_word, foreign_word FROM words WHERE lang_id = $lang_id AND word_rank BETWEEN $lower_range AND $higher_range', {$lang_id: langId, $lower_range: (result.curr_level * 10)-9, $higher_range: (result.curr_level * 10)});
+            const wordRows = await db.getAllAsync<{word_id: number, native_word: string, foreign_word: string, corr_count: number, fail_count: number}>('SELECT word_id, native_word, foreign_word, corr_count, fail_count FROM words WHERE lang_id = $lang_id AND word_rank BETWEEN $lower_range AND $higher_range', {$lang_id: langId, $lower_range: (result.curr_level * 10)-9, $higher_range: (result.curr_level * 10)});
 
             for (let i = wordRows.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -42,7 +37,9 @@ async function getCardData (
             setWordData(wordRows.map(row => ({
                 wordId: row.word_id,
                 nativeWord: row.native_word,
-                foreignWord: row.foreign_word
+                foreignWord: row.foreign_word,
+                corrCount: row.corr_count,
+                failCount: row.fail_count
             })));
 
         } else {
@@ -55,8 +52,8 @@ async function getCardData (
 
 async function resetDeck(
     setFinishedDeck:        React.Dispatch<React.SetStateAction<boolean>>,
-    wordData:               Translation[],
-    setWordData:            React.Dispatch<React.SetStateAction<Translation[]>>,
+    wordData:               WordRowType[],
+    setWordData:            React.Dispatch<React.SetStateAction<WordRowType[]>>,
     setDeckKey:             React.Dispatch<React.SetStateAction<number>>
 ) {
     const tempData = [...wordData];
@@ -74,7 +71,7 @@ async function resetDeck(
 }       
 
 export default function TestDeck(props : Props) {
-    const [wordData, setWordData] = useState<Translation[]>([]);
+    const [wordData, setWordData] = useState<WordRowType[]>([]);
     const [finishedDeck, setFinishedDeck] = useState<boolean>(false);
     const [exitingDeck, setExitingDeck] = useState<boolean>(false);
     const [intermissionVisible, setIntermissionVisible] = useState<boolean>(true);
@@ -88,13 +85,13 @@ export default function TestDeck(props : Props) {
         getCardData(props.langId, setWordData);
     }, []);
 
-    const renderCard = useCallback((data: Translation) => {
+    const renderCard = useCallback((data: WordRowType) => {
         return (
         <Card nativeText={data.nativeWord}/>
         );
     }, [wordData]);
 
-    const renderFlippedCard = useCallback((data: Translation, index: number) => {
+    const renderFlippedCard = useCallback((data: WordRowType, index: number) => {
         return (
             <Card nativeText={data.nativeWord} foreignText={data.foreignWord} />
         );

@@ -7,4 +7,13 @@ export type LangRowType = {
     lang_level?:    number | null;
 };
 
+export type WordRowType = {
+    wordId:         number
+    nativeWord:     string,
+    foreignWord:    string,
+    corrCount:      number,
+    failCount:      number
+};
+
+
 export type StageMode = 'level' | 'fail' | 'practice' | 'train' | 'test';
