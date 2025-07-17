@@ -132,6 +132,7 @@ export default function TestDeck(props : Props) {
                         style={styles.subContainer}
                         entering={FadeInUp.duration(400)}
                         exiting={FadeOutUp.duration(400)}
+                        key={deckKey}
                     >
                         <Swiper
                             ref={ref}
