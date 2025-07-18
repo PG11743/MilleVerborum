@@ -5,9 +5,10 @@ import { Pressable, StyleSheet, Text } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp, LinearTransition, runOnJS } from 'react-native-reanimated';
 
 type Props = {
-    stageMode:      StageMode;
-    setVisibility:   React.Dispatch<React.SetStateAction<boolean>>;
-    langId:         LangRowType["lang_id"]
+    stageMode:          StageMode;
+    setVisibility:      React.Dispatch<React.SetStateAction<boolean>>;
+    langId:             LangRowType["lang_id"];
+    onComplete?:        () => void;
 };
 
 async function getLevelData (
@@ -33,7 +34,8 @@ function renderIntermission(
     levelCounter:   LangRowType["lang_level"],
     setVisibility:  React.Dispatch<React.SetStateAction<boolean>>,
     showSubtext:    boolean,
-    showAllText:    boolean
+    showAllText:    boolean,
+    onComplete:     () => void
 ) {
     switch(stageMode) {
         case    'train':
@@ -88,6 +90,32 @@ function renderIntermission(
                     </Animated.View>
                 )
             );
+        case    'promotion':
+            return (
+                (showAllText && levelCounter) && (
+                    <Animated.View
+                        style={styles.levelBox}
+                        layout={LinearTransition.springify().damping(0)}
+                        exiting={FadeOutUp.duration(400).withCallback(() => {
+                            runOnJS(onComplete)(); // Use optional chaining to prevent crashing if undefined
+                        })}
+                        entering={FadeInUp.duration(400)}
+                    >
+                        <Text style={styles.text}>
+                            Test complete!
+                        </Text>
+                        {showSubtext && (
+                        <Animated.View
+                            entering={FadeInUp.duration(400)}
+                        >
+                            <Text style={styles.subtext}>
+                                You have been promoted to {levelCounter + 1}
+                            </Text>
+                        </Animated.View>
+                        )}
+                    </Animated.View>
+                )
+            );
         default:
             return (
                 (showAllText && levelCounter) && (
@@ -118,14 +146,20 @@ function renderIntermission(
 }
 
 
-export default function IntermissionDisplay(props : Props) {
+export default function IntermissionDisplay({
+        stageMode,
+        setVisibility,
+        langId,
+        onComplete = () => {}
+    } : Props) {
+
     const [showSubtext, setShowSubtext] = useState<boolean>(false);
     const [showAllText, setShowAllText] = useState<boolean>(true);
     const [levelCounter, setLevelCounter] = useState<LangRowType["lang_level"]>(null);
 
     console.log('RUNNING INTERMISSION...');
     useEffect(() => {
-        getLevelData(props.langId, setLevelCounter);
+        getLevelData(langId, setLevelCounter);
     }, []);
 
     useEffect(() => {
@@ -158,7 +192,7 @@ export default function IntermissionDisplay(props : Props) {
 
     return (
         <Pressable onPress={skip} style={styles.container}>
-                {() => renderIntermission(props.stageMode, levelCounter, props.setVisibility, showSubtext, showAllText)}
+                {() => renderIntermission(stageMode, levelCounter, setVisibility, showSubtext, showAllText, onComplete)}
         </Pressable>
     );
 }

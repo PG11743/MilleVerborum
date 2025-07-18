@@ -77,8 +77,6 @@ export default function PracticeDeck(props : Props) {
     const [intermissionVisible, setIntermissionVisible] = useState<boolean>(true);
     const [deckKey, setDeckKey] = useState<number>(0);
 
-    console.log('running PracticeDeck');
-
     const ref = useRef<SwiperCardRefType>(null);
 
     useEffect(() => {

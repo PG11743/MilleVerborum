@@ -54,7 +54,8 @@ async function resetDeck(
     setFinishedDeck:        React.Dispatch<React.SetStateAction<boolean>>,
     wordData:               WordRowType[],
     setWordData:            React.Dispatch<React.SetStateAction<WordRowType[]>>,
-    setDeckKey:             React.Dispatch<React.SetStateAction<number>>
+    setDeckKey:             React.Dispatch<React.SetStateAction<number>>,
+    setFailCount:           React.Dispatch<React.SetStateAction<number>>
 ) {
     const tempData = [...wordData];
     for (let i = tempData.length - 1; i >= 0; i--) {
@@ -65,6 +66,7 @@ async function resetDeck(
     setFinishedDeck(false);
 
     setTimeout(() => {
+        setFailCount(0);
         setWordData(tempData);
         setDeckKey(prevDeckKey => prevDeckKey + 1);
     }, 400);
@@ -76,8 +78,7 @@ export default function TrainDeck(props : Props) {
     const [exitingDeck, setExitingDeck] = useState<boolean>(false);
     const [intermissionVisible, setIntermissionVisible] = useState<boolean>(true);
     const [deckKey, setDeckKey] = useState<number>(0);
-
-    console.log('running TrainDeck');
+    const [failCount, setFailCount] = useState<number>(0);
 
     const ref = useRef<SwiperCardRefType>(null);
 
@@ -148,32 +149,48 @@ export default function TrainDeck(props : Props) {
                             disableTopSwipe={true}
                             OverlayLabelRight={OverlayLabelRight}
                             OverlayLabelLeft={OverlayLabelLeft}
+                            onSwipeRight={() => {setFailCount(prevFailCount => prevFailCount + 1)}}
                             onSwipedAll={() => { if (wordData.length != 0) {setFinishedDeck(true)}}}
                         />
                         {(finishedDeck && !exitingDeck) && (
-                            <Animated.View
-                                entering={FadeInUp.duration(400)}
-                                exiting={FadeOutUp.duration(400)}
-                                style={styles.trainEndContainer}
-                            >
-                                <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, setDeckKey)} style={styles.trainPressable}>
-                                    <FontAwesome name="undo" size={30} color="#000000ff" style={styles.resetButton}/>
-                                    <Text style={styles.text}>Retry</Text>
-                                </Pressable>
-                                <Pressable
-                                    onPress={() => {
-                                        setExitingDeck(true);
-                                        setTimeout(() => {
-                                            props.setStageMode('test');
-                                        }, 400)
-                                        }
-                                    }
-                                    style={styles.trainPressable}
+                            (failCount === 0) ? (
+                                <Animated.View
+                                    entering={FadeInUp.duration(400)}
+                                    exiting={FadeOutUp.duration(400)}
+                                    style={styles.trainEndContainer}
                                 >
-                                    <FontAwesome name="arrow-right" size={30} color="#000000ff" style={styles.resetButton}/>
-                                    <Text style={styles.text}>Attempt Promotion</Text>
-                                </Pressable>
-                            </Animated.View>
+                                    <Text style={styles.text}>No wrong cards!</Text>
+                                    <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, setDeckKey, setFailCount)} style={styles.trainPressable}>
+                                        <FontAwesome name="undo" size={30} color="#000000ff" style={styles.resetButton}/>
+                                        <Text style={styles.text}>Retry</Text>
+                                    </Pressable>
+                                    <Pressable
+                                        onPress={() => {
+                                            setExitingDeck(true);
+                                            setTimeout(() => {
+                                                props.setStageMode('test');
+                                            }, 400)
+                                            }
+                                        }
+                                        style={styles.trainPressable}
+                                    >
+                                        <FontAwesome name="arrow-right" size={30} color="#000000ff" style={styles.resetButton}/>
+                                        <Text style={styles.text}>Attempt Promotion</Text>
+                                    </Pressable>
+                                </Animated.View>
+                            ) : (
+                                <Animated.View
+                                    entering={FadeInUp.duration(400)}
+                                    exiting={FadeOutUp.duration(400)}
+                                    style={styles.trainEndContainer}
+                                >
+                                    <Text style={styles.text}>Incorrect cards: {failCount}</Text>
+                                    <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, setDeckKey, setFailCount)} style={styles.trainPressable}>
+                                        <FontAwesome name="undo" size={30} color="#000000ff" style={styles.resetButton}/>
+                                        <Text style={styles.text}>Retry</Text>
+                                    </Pressable>
+                                </Animated.View>
+                            )
                         )}
                     </Animated.View>
                 )

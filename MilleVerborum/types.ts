@@ -16,4 +16,4 @@ export type WordRowType = {
 };
 
 
-export type StageMode = 'level' | 'fail' | 'practice' | 'train' | 'test';
+export type StageMode = 'level' | 'fail' | 'practice' | 'train' | 'test' | 'promotion';

@@ -1,10 +1,11 @@
+import IntermissionDisplay from '@/components/IntermissionDisplay';
 import PracticeDeck from '@/components/PracticeDeck';
 import TestDeck from '@/components/TestDeck';
 import TrainDeck from '@/components/TrainDeck';
 import { LangRowType, StageMode } from '@/types';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 type Props = {
     initStageMode: StageMode
@@ -15,9 +16,10 @@ type Props = {
 // }
 
 function renderStage(
-    stageMode:      StageMode,
-    setStageMode:   React.Dispatch<React.SetStateAction<StageMode>>,
-    langId:         LangRowType["lang_id"]
+    stageMode:          StageMode,
+    setStageMode:       React.Dispatch<React.SetStateAction<StageMode>>,
+    langId:             LangRowType["lang_id"],
+    setInterVisible:    React.Dispatch<React.SetStateAction<boolean>>
 ) {
     switch (stageMode) {
         case    'practice':
@@ -32,8 +34,8 @@ function renderStage(
             console.log('opening test display');
             // return <DeckDisplay stageMode={stageMode} setStageMode={setStageMode} langId={langId}/>
             return <TestDeck langId={langId} setStageMode={setStageMode} stageMode={stageMode} />
-        case    'fail':
-            return <Text>fail display</Text>;
+        case    'promotion':
+            return <IntermissionDisplay stageMode={stageMode} setVisibility={setInterVisible} langId={langId} />;
         default:
             console.log('opening level display');
             // return <LevelDisplay stageMode={stageMode} setStageMode={setStageMode} langId={langId}/>
@@ -43,6 +45,7 @@ function renderStage(
 export default function StagingScreen({initStageMode} : Props) {
     const [stageMode, setStageMode] = useState<StageMode>(initStageMode ?? 'practice');
     const langId = Number(useLocalSearchParams().lang_id);
+    const [interVisible, setInterVisible] = useState<boolean>(false);
     console.log('language ID is ', langId);
 
     return (
@@ -51,7 +54,8 @@ export default function StagingScreen({initStageMode} : Props) {
                 (
                     stageMode,
                     setStageMode,
-                    langId
+                    langId,
+                    setInterVisible
                 )
             }
         </View>

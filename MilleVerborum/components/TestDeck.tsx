@@ -27,7 +27,7 @@ async function getCardData (
         const db = await openLanguageDatabase();
         const result = await db.getFirstAsync<{curr_level: number}>('SELECT curr_level FROM languages WHERE lang_id = $lang_id', {$lang_id: langId});
         if (result) {
-            const wordRows = await db.getAllAsync<{word_id: number, native_word: string, foreign_word: string, corr_count: number, fail_count: number}>('SELECT word_id, native_word, foreign_word, corr_count, fail_count FROM words WHERE lang_id = $lang_id AND word_rank BETWEEN $lower_range AND $higher_range', {$lang_id: langId, $lower_range: (result.curr_level * 10)-9, $higher_range: (result.curr_level * 10)});
+            const wordRows = await db.getAllAsync<{word_id: number, native_word: string, foreign_word: string, corr_count: number, fail_count: number}>('SELECT word_id, native_word, foreign_word, corr_count, fail_count FROM words WHERE lang_id = $lang_id AND word_rank <= $higher_range', {$lang_id: langId, $higher_range: (result.curr_level * 10)});
 
             for (let i = wordRows.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -54,7 +54,8 @@ async function resetDeck(
     setFinishedDeck:        React.Dispatch<React.SetStateAction<boolean>>,
     wordData:               WordRowType[],
     setWordData:            React.Dispatch<React.SetStateAction<WordRowType[]>>,
-    setDeckKey:             React.Dispatch<React.SetStateAction<number>>
+    setDeckKey:             React.Dispatch<React.SetStateAction<number>>,
+    setFailCount:           React.Dispatch<React.SetStateAction<number>>
 ) {
     const tempData = [...wordData];
     for (let i = tempData.length - 1; i >= 0; i--) {
@@ -65,10 +66,30 @@ async function resetDeck(
     setFinishedDeck(false);
 
     setTimeout(() => {
+        setFailCount(0);
         setWordData(tempData);
         setDeckKey(prevDeckKey => prevDeckKey + 1);
     }, 400);
-}       
+}
+
+async function promoteLevel (
+    langId:                     LangRowType["lang_id"],
+    setStageMode:               React.Dispatch<React.SetStateAction<StageMode>>
+) {
+    console.log('running promotion...');
+    try{
+        const db = await openLanguageDatabase();
+        const updateLanguageStatement = await db.prepareAsync('UPDATE languages SET curr_level = curr_level + 1 WHERE lang_id = $lang_id AND curr_level <= 99');
+        const result = await updateLanguageStatement.executeAsync({$lang_id: langId});
+        await updateLanguageStatement.finalizeAsync();
+        console.log(result);
+        setStageMode('practice');
+    } catch (error) {
+        console.error("DB failed to open", error);
+    }
+
+}
+
 
 export default function TestDeck(props : Props) {
     const [wordData, setWordData] = useState<WordRowType[]>([]);
@@ -76,14 +97,20 @@ export default function TestDeck(props : Props) {
     const [exitingDeck, setExitingDeck] = useState<boolean>(false);
     const [intermissionVisible, setIntermissionVisible] = useState<boolean>(true);
     const [deckKey, setDeckKey] = useState<number>(0);
+    const [failCount, setFailCount] = useState<number>(0);
+    const [currStageMode, setCurrStagemode] = useState<StageMode>(props.stageMode);
 
-    console.log('running TestDeck');
+    const failCountRef = useRef(failCount);
 
     const ref = useRef<SwiperCardRefType>(null);
 
     useEffect(() => {
         getCardData(props.langId, setWordData);
     }, []);
+
+    useEffect(() => {
+        failCountRef.current = failCount;
+    }, [failCount]);
 
     const renderCard = useCallback((data: WordRowType) => {
         return (
@@ -126,7 +153,14 @@ export default function TestDeck(props : Props) {
     return (
         <GestureHandlerRootView>
             {intermissionVisible ? (
-                <IntermissionDisplay setVisibility={setIntermissionVisible} stageMode={props.stageMode} langId={props.langId}/>
+                <IntermissionDisplay
+                    setVisibility={setIntermissionVisible}
+                    stageMode={currStageMode}
+                    langId={props.langId}
+                    onComplete={() => {
+                        promoteLevel(props.langId, props.setStageMode);
+                    }}
+                />
                 ) : (
                     <Animated.View
                         style={styles.subContainer}
@@ -137,6 +171,7 @@ export default function TestDeck(props : Props) {
                         <Swiper
                             ref={ref}
                             data={wordData}
+                            prerenderItems={20}
                             cardStyle={styles.cardStyle}
                             overlayLabelContainerStyle={styles.overlayLabelContainerStyle}
                             renderCard={renderCard}
@@ -148,7 +183,22 @@ export default function TestDeck(props : Props) {
                             disableTopSwipe={true}
                             OverlayLabelRight={OverlayLabelRight}
                             OverlayLabelLeft={OverlayLabelLeft}
-                            onSwipedAll={() => { if (wordData.length != 0) {setFinishedDeck(true)}}}
+                            onSwipeRight={() => {setFailCount(prevFailCount => prevFailCount + 1)}}
+                            onSwipedAll={() => {
+                                if (failCountRef.current === 0) {
+                                    console.log('Issues: ', failCountRef.current, ', looping to practice');
+                                    setTimeout(() => {
+                                        console.log('starting promotion display');
+                                        setExitingDeck(true);
+                                        setCurrStagemode('promotion');
+                                        setIntermissionVisible(true);
+                                    }, 400);
+                                } else {
+                                    console.log('Issues: ', failCountRef.current, ', placing reset button');
+                                    setFinishedDeck(true);
+                                }
+                                }
+                            }
                         />
                         {(finishedDeck && !exitingDeck) && (
                             <Animated.View
@@ -156,22 +206,10 @@ export default function TestDeck(props : Props) {
                                 exiting={FadeOutUp.duration(400)}
                                 style={styles.testEndContainer}
                             >
-                                <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, setDeckKey)} style={styles.testPressable}>
+                                <Text style={styles.text}>Incorrect cards: {failCount}</Text>
+                                <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, setDeckKey, setFailCount)} style={styles.testPressable}>
                                     <FontAwesome name="undo" size={30} color="#000000ff" style={styles.resetButton}/>
                                     <Text style={styles.text}>Retry</Text>
-                                </Pressable>
-                                <Pressable
-                                    onPress={() => {
-                                        setExitingDeck(true);
-                                        setTimeout(() => {
-                                            props.setStageMode('test');
-                                        }, 400)
-                                        }
-                                    }
-                                    style={styles.testPressable}
-                                >
-                                    <FontAwesome name="arrow-right" size={30} color="#000000ff" style={styles.resetButton}/>
-                                    <Text style={styles.text}>Attempt Promotion</Text>
                                 </Pressable>
                             </Animated.View>
                         )}
