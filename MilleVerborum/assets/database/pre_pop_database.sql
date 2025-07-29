@@ -2,17 +2,16 @@ DROP TABLE IF EXISTS languages;
 DROP TABLE IF EXISTS words;
 DROP TABLE IF EXISTS test;
 
-PRAGMA foreign_keys = ON;
-
+-- PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS languages (
     lang_id         INTEGER     PRIMARY KEY,
     lang_name       TEXT        NOT NULL UNIQUE,
     lang_abv        TEXT        NOT NULL UNIQUE,
-    curr_level      INTEGER,
+    curr_level      INTEGER/*,
     prime_col       TEXT,
     sec_col         TEXT,
-    ter_col         TEXT
+    ter_col         TEXT*/
 );
 
 CREATE TABLE IF NOT EXISTS words (
@@ -31,47 +30,47 @@ CREATE TABLE IF NOT EXISTS words (
 INSERT INTO languages (
     lang_name,
     lang_abv,
-    curr_level,
+    curr_level/*,
     prime_col,
     sec_col,
-    ter_col
+    ter_col*/
 ) values (
     "Danish",
     "DA",
-    null,
+    null/*,
     '#C8102E',
     '#FFFFFF',
-    null
+    null*/
 );
 
 INSERT INTO languages (
     lang_name,
     lang_abv,
-    curr_level,
+    curr_level/*,
     prime_col,
     sec_col,
-    ter_col
+    ter_col*/
 ) values (
     "Estonian",
     "ET",
-    null,
+    null/*,
     '#0072CE',
     '#000000',
-    '#FFFFFF'
+    '#FFFFFF'*/
 );
 
 INSERT INTO languages (
     lang_name,
     lang_abv,
-    curr_level,
+    curr_level/*,
     prime_col,
     sec_col,
-    ter_col
+    ter_col*/
 ) values (
     "Lithuanian",
     "LT",
-    null,
+    null/*,
     '#FFB81C',
     '#046A38',
-    '#BE3A34'
+    '#BE3A34'*/
 );

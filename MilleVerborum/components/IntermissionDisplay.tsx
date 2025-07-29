@@ -108,9 +108,15 @@ function renderIntermission(
                         <Animated.View
                             entering={FadeInUp.duration(400)}
                         >
+                            {levelCounter < 100 ?(
                             <Text style={styles.subtext}>
                                 You have been promoted to {levelCounter + 1}
                             </Text>
+                            ) : (
+                            <Text style={styles.subtext}>
+                                You have been won c:
+                            </Text>
+                            )}
                         </Animated.View>
                         )}
                     </Animated.View>

@@ -5,13 +5,15 @@ import { openDatabaseAsync, SQLiteDatabase } from 'expo-sqlite';
 
 const DB_NAME = 'milleverborum.db';
 
+const wipeFlag = false;
+
 export async function openLanguageDatabase(): Promise<SQLiteDatabase> {
     // console.log('entered async function openLanguageDatabase...');
     const sqliteFolder = `${FileSystem.documentDirectory}SQLite`;
     const dbPath = `${sqliteFolder}/${DB_NAME}`;
     // console.log('dbPath is said to be: ', dbPath);
     const fileInfo = await FileSystem.getInfoAsync(dbPath);
-    if (!fileInfo.exists) {
+    if (!fileInfo.exists || wipeFlag) {
         const asset = Asset.fromModule(require('@/assets/database/milleverborum.db'));
 
         await asset.downloadAsync();
