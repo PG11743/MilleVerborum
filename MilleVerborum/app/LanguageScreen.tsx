@@ -3,11 +3,20 @@ import { openLanguageDatabase } from '@/db/openDatabase';
 import { LangRowType } from '@/types';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { LinearGradient } from 'expo-linear-gradient';
-import LottieView from 'lottie-react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StatusBar, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView, Pressable, ScrollView } from 'react-native-gesture-handler';
+import Animated, { LinearTransition, ZoomIn, ZoomOut } from 'react-native-reanimated';
 import LanguageSelect from './LanguageSelect';
+
+const hasMounted = useRef(false);
+
+// useFocusEffect(
+//     useCallback(() => {
+//         hasMounted.current = false;
+//     }, [])
+// )
+
 
 
 async function getActiveLanguages (setActiveLanguages : Function, setActiveLoading : Function) {
@@ -41,41 +50,36 @@ export default function LanguageScreen() {
                     colors={['#00f9ff', '#fdf902']}
                     style={StyleSheet.absoluteFill}
                 />
-                    {loading ? (
-                        <View style={styles.loadingBox}>
-                            <LottieView
-                                source={require('@/assets/animations/loading.json')}
-                                autoPlay
-                                loop={true}
-                                style={{ width: 150, height: 150 }}
-                            />                
+                    <ScrollView style={styles.scrollView}>
+                        {
+                            languages.map((item) => (
+                                <Animated.View
+                                    key={item.lang_id}
+                                    layout={LinearTransition.springify()}
+                                    entering={hasMounted.current ? ZoomIn : undefined}
+                                    exiting={ZoomOut}
+                                >
+                                    <LanguageListItem key={item.lang_id} item={{lang_id: item.lang_id, lang_name: item.lang_name}} setActiveLoading={setLoading} activeOnly={true}/>
+                                </Animated.View>
+                            ))
+                        }
+                    </ScrollView>
+                    <Pressable style={styles.modalBox} onPress={
+                        () =>{
+                            hasMounted.current = true;
+                            setModalVisibility(true);
+                        }}
+                    >
+                        <View style={styles.modalButton}>
+                            <FontAwesome name="plus" size={20} style={styles.buttonIcon} />
+                            <Text style={styles.modalButtonText}>Add language</Text>
                         </View>
-                    ) : (
-                        <View>
-                            <ScrollView style={styles.scrollView}>
-                                {
-                                    languages.map((item) => (
-                                        <LanguageListItem key={item.lang_id} item={{lang_id: item.lang_id, lang_name: item.lang_name}} setActiveLoading={setLoading} activeOnly={true}/>
-                                    ))
-                                }
-                            </ScrollView>
-                            <Pressable style={styles.modalBox} onPress={
-                                () =>{
-                                    setModalVisibility(true);
-                                }}
-                            >
-                                <View style={styles.modalButton}>
-                                    <FontAwesome name="plus" size={20} style={styles.buttonIcon} />
-                                    <Text style={styles.modalButtonText}>Add language</Text>
-                                </View>
-                            </Pressable>
-                        </View>
-                    )}
-                    <LanguageSelect
-                        isModalVisible={isModalVisible}
-                        setModalVisibility={setModalVisibility}
-                    />
-                    <StatusBar translucent backgroundColor="transparent" />
+                    </Pressable>
+                <LanguageSelect
+                    isModalVisible={isModalVisible}
+                    setModalVisibility={setModalVisibility}
+                />
+                <StatusBar translucent backgroundColor="transparent" />
             </GestureHandlerRootView>
     );
 }

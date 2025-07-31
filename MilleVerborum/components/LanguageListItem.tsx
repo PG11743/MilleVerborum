@@ -1,5 +1,6 @@
 import { openLanguageDatabase } from '@/db/openDatabase';
 import { LangRowType } from '@/types';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
@@ -73,13 +74,11 @@ export default function LanguageListItem(props : Props) {
                         style={styles.deleteAction}
                         onPress={() => deactiveLanguage(props.item, props.setActiveLoading)}
                     >
-                        <Text style={styles.actionText}>
-                            Delete
-                        </Text>
+                        <FontAwesome name="trash" size={30} color="#ffffff"/>
                     </TouchableOpacity>
                     )}
                 >
-                    <Pressable onPress={() => {router.push({pathname: '/StagingScreen', params: {lang_id: props.item.lang_id}});}} style={styles.itemContainer}>
+                    <Pressable onPress={() => {router.push({pathname: '/StagingScreen', params: {lang_id: props.item.lang_id}});}} style={styles.activeItemContainer}>
                         <Text>{props.item.lang_name}</Text>
                     </Pressable>
                 </Swipeable>
@@ -92,7 +91,7 @@ export default function LanguageListItem(props : Props) {
                         );
                         props.setModalVisibility(false);
                     }} 
-                    style={styles.itemContainer}
+                    style={styles.unactiveItemContainer}
                 >
                     <Text>{props.item.lang_name}</Text>
                 </Pressable>
@@ -103,18 +102,25 @@ export default function LanguageListItem(props : Props) {
 }
 
 const styles = StyleSheet.create({
-  itemContainer: {
+  activeItemContainer: {
+    backgroundColor: '#fff',
+    padding: 20,
+    marginBottom: 2,
+    borderRadius: 10
+  },
+unactiveItemContainer: {
     backgroundColor: '#fff',
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderColor: '#d3d2d2ff'
   },
   deleteAction: {
     backgroundColor: '#ff3b30',
     justifyContent: 'center',
     alignItems: 'center',
     width: 80,
-    height: '100%',
+    marginBottom: 2,
+    borderRadius: 10
   },
   actionText: {
     color: 'white',
