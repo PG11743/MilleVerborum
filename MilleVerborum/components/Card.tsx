@@ -1,26 +1,29 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 type Props = {
-    nativeText :    string,
-    foreignText?:    string
+    nativeText :        string;
+    foreignText?:       string;
+    backgroundColour:   string;
+    textColour:         string;
+    borderColour:       string;
 };
 
-export default function Card ({nativeText, foreignText} : Props) {
+export default function Card (props : Props) {
     return (
-        <View style={styles.renderCardContainer}>
-            {foreignText ? (
+        <View style={[styles.renderCardContainer, {backgroundColor: props.backgroundColour}]}>
+            {props.foreignText ? (
             <View style={styles.cardTextContainer}>
                 <View>
-                    <Text style={styles.text}>{nativeText}</Text>
+                    <Text style={[styles.text, {color: props.textColour}]}>{props.nativeText}</Text>
                 </View>
-                <View style={styles.foreignBox}>
-                    <Text style={styles.subtext}>{foreignText}</Text>
+                <View style={[styles.foreignBox, {borderColor: props.textColour}]}>
+                    <Text style={[styles.subtext, {color: props.textColour}]}>{props.foreignText}</Text>
                 </View>
             </View>
             ) : (
             <View style={styles.cardTextContainer}>
                 <View>
-                    <Text style={styles.text}>{nativeText}</Text>
+                    <Text style={[styles.text, {color: props.textColour}]}>{props.nativeText}</Text>
                 </View>
             </View>
             )}
@@ -35,8 +38,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '100%',
         height: '100%',
-        backgroundColor: '#fff',
-        paddingTop: 200
+        paddingTop: 200,
+        marginVertical: 50
     },
     cardTextContainer: {
         justifyContent: 'center',

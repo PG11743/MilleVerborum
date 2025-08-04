@@ -3,20 +3,14 @@ import { openLanguageDatabase } from '@/db/openDatabase';
 import { LangRowType } from '@/types';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useEffect, useRef, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { StatusBar, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView, Pressable, ScrollView } from 'react-native-gesture-handler';
 import Animated, { LinearTransition, ZoomIn, ZoomOut } from 'react-native-reanimated';
 import LanguageSelect from './LanguageSelect';
 
 const hasMounted = useRef(false);
-
-// useFocusEffect(
-//     useCallback(() => {
-//         hasMounted.current = false;
-//     }, [])
-// )
-
 
 
 async function getActiveLanguages (setActiveLanguages : Function, setActiveLoading : Function) {
@@ -35,6 +29,15 @@ export default function LanguageScreen() {
     const [languages, setLanguages] = useState<LangRowType[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [isModalVisible, setModalVisibility] = useState<boolean>(false);
+
+    useFocusEffect(
+        useCallback(() => {
+            return () => {
+                hasMounted.current = false;
+                console.log('hasMounted is now ', hasMounted.current);
+            };
+        }, [])
+    );
 
     useEffect(() => {
         if (!isModalVisible) {

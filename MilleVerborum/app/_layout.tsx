@@ -13,7 +13,14 @@ export default function RootLayout() {
             headerStyle: {backgroundColor: 'transparent'},
             headerBackground: () => <View style={{ flex: 1, backgroundColor: 'transparent' }}/>}}
         />
-        <Stack.Screen name="StagingScreen" options={{ title: ''}} />
+        <Stack.Screen name="StagingScreen" options={{
+            title: '',
+            headerTransparent: true,
+            headerTitleStyle: {color: '#000000'},
+            headerTintColor: '#000000',
+            headerStyle: {backgroundColor: 'transparent'},
+            headerBackground: () => <View style={{ flex: 1, backgroundColor: 'transparent' }}/>}}
+        />
         <Stack.Screen name="LanguageSelect" options={{ title: 'Add Language', presentation: 'modal' }} />
     </Stack>    
   );

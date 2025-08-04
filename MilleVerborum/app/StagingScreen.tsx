@@ -2,38 +2,67 @@ import IntermissionDisplay from '@/components/IntermissionDisplay';
 import PracticeDeck from '@/components/PracticeDeck';
 import TestDeck from '@/components/TestDeck';
 import TrainDeck from '@/components/TrainDeck';
+import { openLanguageDatabase } from '@/db/openDatabase';
 import { LangRowType, StageMode } from '@/types';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { StatusBar, StyleSheet, View } from 'react-native';
 
 type Props = {
     initStageMode: StageMode
 };
 
-// function progressStage(stageMode : StageMode) {
-//     switch (stageMode)
-// }
+type ThemeColours = {
+    prime_col:      string,
+    sec_col:        string,
+    ter_col:        string
+} | null
+
+async function getThemeColours (
+    lang_id:            number,
+    setPrimaryColour:   React.Dispatch<React.SetStateAction<string>>,
+    setSecondaryColour: React.Dispatch<React.SetStateAction<string>>,
+    setTertiaryColour:  React.Dispatch<React.SetStateAction<string>>
+) {
+    try{
+        const db = await openLanguageDatabase();
+        const result: ThemeColours = await db.getFirstAsync("SELECT prime_col, sec_col, ter_col FROM languages where lang_id = ?;", lang_id);
+        
+        console.log(result);
+        console.log('primary colour? ', result?.prime_col);
+        if (result) {
+            setPrimaryColour(result.prime_col);
+            setSecondaryColour(result.sec_col);
+            setTertiaryColour(result.ter_col);
+        };
+    } catch (error) {
+        console.error("DB failed to open", error);
+    }    
+};
 
 function renderStage(
     stageMode:          StageMode,
     setStageMode:       React.Dispatch<React.SetStateAction<StageMode>>,
     langId:             LangRowType["lang_id"],
-    setInterVisible:    React.Dispatch<React.SetStateAction<boolean>>
+    setInterVisible:    React.Dispatch<React.SetStateAction<boolean>>,
+    primaryColour:      string,
+    secondaryColour:    string,
+    tertiaryColour:     string
 ) {
     switch (stageMode) {
         case    'practice':
             console.log('opening practice display');
             // return <DeckDisplay stageMode={stageMode} setStageMode={setStageMode} langId={langId}/>
-            return <PracticeDeck langId={langId} setStageMode={setStageMode} stageMode={stageMode} />
+            return <PracticeDeck langId={langId} setStageMode={setStageMode} stageMode={stageMode} primaryColour={primaryColour} secondaryColour={secondaryColour} tertiaryColour={tertiaryColour} />
         case    'train':
             console.log('opening training display');
             // return <DeckDisplay stageMode={stageMode} setStageMode={setStageMode} langId={langId}/>
-            return <TrainDeck langId={langId} setStageMode={setStageMode} stageMode={stageMode} />
+            return <TrainDeck langId={langId} setStageMode={setStageMode} stageMode={stageMode} primaryColour={primaryColour} secondaryColour={secondaryColour} tertiaryColour={tertiaryColour}/>
         case    'test':
             console.log('opening test display');
             // return <DeckDisplay stageMode={stageMode} setStageMode={setStageMode} langId={langId}/>
-            return <TestDeck langId={langId} setStageMode={setStageMode} stageMode={stageMode} />
+            return <TestDeck langId={langId} setStageMode={setStageMode} stageMode={stageMode} primaryColour={primaryColour} secondaryColour={secondaryColour} tertiaryColour={tertiaryColour}/>
         case    'promotion':
             return <IntermissionDisplay stageMode={stageMode} setVisibility={setInterVisible} langId={langId} />;
         default:
@@ -46,18 +75,39 @@ export default function StagingScreen({initStageMode} : Props) {
     const [stageMode, setStageMode] = useState<StageMode>(initStageMode ?? 'practice');
     const langId = Number(useLocalSearchParams().lang_id);
     const [interVisible, setInterVisible] = useState<boolean>(false);
+    const [primaryColour, setPrimaryColour] = useState<string>('#ffffff');
+    const [secondaryColour, setSecondaryColour] = useState<string>('#000000');
+    const [tertiaryColour, setTertiaryColour] = useState<string>('#000000');
+
     console.log('language ID is ', langId);
+
+    useEffect(() => {
+        console.log('running async...');
+        const fetchColours = async () => {
+            console.log('getting colours...');
+            await getThemeColours(langId, setPrimaryColour, setSecondaryColour, setTertiaryColour);
+        }
+        fetchColours();
+    }, []);
 
     return (
         <View style={styles.container}>
+            <LinearGradient
+                colors={['#00f9ff', '#fdf902']}
+                style={StyleSheet.absoluteFill}
+            />
             {renderStage
                 (
                     stageMode,
                     setStageMode,
                     langId,
-                    setInterVisible
+                    setInterVisible,
+                    primaryColour,
+                    secondaryColour,
+                    tertiaryColour
                 )
             }
+            <StatusBar translucent backgroundColor="transparent" />
         </View>
     );
 }

@@ -15,6 +15,9 @@ type Props = {
     langId:         LangRowType["lang_id"];
     stageMode:      StageMode;
     setStageMode:   React.Dispatch<React.SetStateAction<StageMode>>;
+    primaryColour:      string;
+    secondaryColour:    string;
+    tertiaryColour:     string;
 };
 
 
@@ -114,13 +117,13 @@ export default function TestDeck(props : Props) {
 
     const renderCard = useCallback((data: WordRowType) => {
         return (
-        <Card nativeText={data.nativeWord}/>
+            <Card nativeText={data.nativeWord} backgroundColour={props.primaryColour} textColour={props.secondaryColour} borderColour={props.tertiaryColour}/>
         );
     }, [wordData]);
 
     const renderFlippedCard = useCallback((data: WordRowType, index: number) => {
         return (
-            <Card nativeText={data.nativeWord} foreignText={data.foreignWord} />
+            <Card nativeText={data.nativeWord} foreignText={data.foreignWord}  backgroundColour={props.secondaryColour} textColour={props.primaryColour} borderColour={props.tertiaryColour}/>
         );
     }, [wordData]);
 
