@@ -107,7 +107,7 @@ export default function TrainDeck(props : Props) {
         style={[
             styles.overlayLabelContainer,
             {
-            backgroundColor: 'red',
+            backgroundColor: '#f04a3e',
             },
         ]}
         />
@@ -119,7 +119,7 @@ export default function TrainDeck(props : Props) {
         style={[
             styles.overlayLabelContainer,
             {
-            backgroundColor: 'green',
+            backgroundColor: '#12e34a',
             },
         ]}
         />
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   },
   cardStyle: {
     width: '90%',
-    height: '90%',
+    height: '85%',
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
   },
   overlayLabelContainer: {
     borderRadius: 15,
-    height: '90%',
+    height: '85%',
     width: '90%',
   },
   text: {

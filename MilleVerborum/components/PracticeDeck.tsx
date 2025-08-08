@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   },
   cardStyle: {
     width: '90%',
-    height: '90%',
+    height: '85%',
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   },
   overlayLabelContainer: {
     borderRadius: 15,
-    height: '90%',
+    height: '85%',
     width: '90%',
   },
   text: {

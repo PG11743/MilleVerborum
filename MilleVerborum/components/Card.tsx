@@ -41,7 +41,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '100%',
         height: '100%',
-        marginVertical: 50,
         padding: 30
     },
     innerCardContainer: {
