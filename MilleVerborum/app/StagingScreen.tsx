@@ -16,14 +16,14 @@ type Props = {
 type ThemeColours = {
     prime_col:      string,
     sec_col:        string,
-    ter_col:        string
+    ter_col:        string | null
 } | null
 
 async function getThemeColours (
     lang_id:            number,
     setPrimaryColour:   React.Dispatch<React.SetStateAction<string>>,
     setSecondaryColour: React.Dispatch<React.SetStateAction<string>>,
-    setTertiaryColour:  React.Dispatch<React.SetStateAction<string>>
+    setTertiaryColour:  React.Dispatch<React.SetStateAction<string | null>>
 ) {
     try{
         const db = await openLanguageDatabase();
@@ -34,7 +34,8 @@ async function getThemeColours (
         if (result) {
             setPrimaryColour(result.prime_col);
             setSecondaryColour(result.sec_col);
-            setTertiaryColour(result.ter_col);
+            console.log('colours returned from DB. Ter col is: ', result.ter_col);
+            if (result.ter_col) {setTertiaryColour(result.ter_col)};
         };
     } catch (error) {
         console.error("DB failed to open", error);
@@ -48,7 +49,7 @@ function renderStage(
     setInterVisible:    React.Dispatch<React.SetStateAction<boolean>>,
     primaryColour:      string,
     secondaryColour:    string,
-    tertiaryColour:     string
+    tertiaryColour:     string | null
 ) {
     switch (stageMode) {
         case    'practice':
@@ -77,7 +78,7 @@ export default function StagingScreen({initStageMode} : Props) {
     const [interVisible, setInterVisible] = useState<boolean>(false);
     const [primaryColour, setPrimaryColour] = useState<string>('#ffffff');
     const [secondaryColour, setSecondaryColour] = useState<string>('#000000');
-    const [tertiaryColour, setTertiaryColour] = useState<string>('#000000');
+    const [tertiaryColour, setTertiaryColour] = useState<string | null>(null);
 
     console.log('language ID is ', langId);
 

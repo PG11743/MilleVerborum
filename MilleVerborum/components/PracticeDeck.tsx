@@ -17,7 +17,7 @@ type Props = {
     setStageMode:       React.Dispatch<React.SetStateAction<StageMode>>;
     primaryColour:      string;
     secondaryColour:    string;
-    tertiaryColour:     string;
+    tertiaryColour:     string | null;
 };
 
 
@@ -88,13 +88,15 @@ export default function PracticeDeck(props : Props) {
 
     const renderCard = useCallback((data: WordRowType) => {
         return (
-            <Card nativeText={data.nativeWord} backgroundColour={props.primaryColour} textColour={props.secondaryColour} borderColour={props.tertiaryColour}/>
+            <Card nativeText={data.nativeWord} backgroundColour={props.primaryColour} textColour={props.secondaryColour} borderColour={(props.tertiaryColour) ? props.tertiaryColour : props.secondaryColour}/>
         );
     }, [wordData]);
 
     const renderFlippedCard = useCallback((data: WordRowType, index: number) => {
+            console.log('checking which color border should be...');
+            console.log('tertiary colour is', (props.tertiaryColour));
         return (
-            <Card nativeText={data.nativeWord} foreignText={data.foreignWord}  backgroundColour={props.secondaryColour} textColour={props.primaryColour} borderColour={props.tertiaryColour}/>
+            <Card nativeText={data.nativeWord} foreignText={data.foreignWord}  backgroundColour={props.secondaryColour} textColour={props.primaryColour} borderColour={(props.tertiaryColour) ? props.tertiaryColour : props.primaryColour}/>
         );
     }, [wordData]);
 

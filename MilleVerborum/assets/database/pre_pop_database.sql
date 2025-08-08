@@ -40,7 +40,7 @@ INSERT INTO languages (
     null,
     '#C8102E',
     '#FFFFFF',
-    '#FFFFFF'
+    null
 );
 
 INSERT INTO languages (
@@ -56,7 +56,7 @@ INSERT INTO languages (
     null,
     '#0072CE',
     '#FFFFFF',
-    '#FFFFFF'
+    null
 );
 
 INSERT INTO languages (
