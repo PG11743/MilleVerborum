@@ -6,8 +6,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
+import Toast from 'react-native-toast-message';
 import { Swiper, type SwiperCardRefType } from 'rn-swiper-list';
 import IntermissionDisplay from './IntermissionDisplay';
+import ProgressToast from './ProgressToast';
 
 
 
@@ -58,7 +60,8 @@ async function resetDeck(
     wordData:               WordRowType[],
     setWordData:            React.Dispatch<React.SetStateAction<WordRowType[]>>,
     setDeckKey:             React.Dispatch<React.SetStateAction<number>>,
-    setFailCount:           React.Dispatch<React.SetStateAction<number>>
+    setIncorrectCount:      React.Dispatch<React.SetStateAction<number>>,
+    setCorrectCount:        React.Dispatch<React.SetStateAction<number>>
 ) {
     const tempData = [...wordData];
     for (let i = tempData.length - 1; i >= 0; i--) {
@@ -69,7 +72,8 @@ async function resetDeck(
     setFinishedDeck(false);
 
     setTimeout(() => {
-        setFailCount(0);
+        setIncorrectCount(0);
+        setCorrectCount(0);
         setWordData(tempData);
         setDeckKey(prevDeckKey => prevDeckKey + 1);
     }, 400);
@@ -81,7 +85,8 @@ export default function TrainDeck(props : Props) {
     const [exitingDeck, setExitingDeck] = useState<boolean>(false);
     const [intermissionVisible, setIntermissionVisible] = useState<boolean>(true);
     const [deckKey, setDeckKey] = useState<number>(0);
-    const [failCount, setFailCount] = useState<number>(0);
+    const [correctCount, setCorrectCount] = useState<number>(0);
+    const [incorrectCount, setIncorrectCount] = useState<number>(0);
 
     const ref = useRef<SwiperCardRefType>(null);
 
@@ -152,18 +157,34 @@ export default function TrainDeck(props : Props) {
                             disableTopSwipe={true}
                             OverlayLabelRight={OverlayLabelRight}
                             OverlayLabelLeft={OverlayLabelLeft}
-                            onSwipeRight={() => {setFailCount(prevFailCount => prevFailCount + 1)}}
+                            onSwipeRight={() => {
+                                setIncorrectCount(prevIncorrectCount => prevIncorrectCount + 1);
+                                Toast.show({
+                                    type: 'incorrectToast', // or 'error' | 'info'
+                                });
+                            }}
+                            onSwipeLeft={() => {
+                                setCorrectCount(prevCorrectCount => prevCorrectCount + 1);
+                                Toast.show({
+                                    type: 'incorrectToast', // or 'error' | 'info'
+                                });
+                            }}
                             onSwipedAll={() => { if (wordData.length != 0) {setFinishedDeck(true)}}}
                         />
+                        <ProgressToast
+                            correct={correctCount}
+                            incorrect={incorrectCount}
+                            remaining={(wordData.length - (correctCount + incorrectCount))}
+                        />
                         {(finishedDeck && !exitingDeck) && (
-                            (failCount === 0) ? (
+                            (incorrectCount === 0) ? (
                                 <Animated.View
                                     entering={FadeInUp.duration(400)}
                                     exiting={FadeOutUp.duration(400)}
                                     style={styles.trainEndContainer}
                                 >
                                     <Text style={styles.text}>No wrong cards!</Text>
-                                    <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, setDeckKey, setFailCount)} style={styles.trainPressable}>
+                                    <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, setDeckKey, setIncorrectCount, setCorrectCount)} style={styles.trainPressable}>
                                         <FontAwesome name="undo" size={30} color="#000000ff" style={styles.resetButton}/>
                                         <Text style={styles.text}>Retry</Text>
                                     </Pressable>
@@ -187,8 +208,8 @@ export default function TrainDeck(props : Props) {
                                     exiting={FadeOutUp.duration(400)}
                                     style={styles.trainEndContainer}
                                 >
-                                    <Text style={styles.text}>Incorrect cards: {failCount}</Text>
-                                    <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, setDeckKey, setFailCount)} style={styles.trainPressable}>
+                                    <Text style={styles.text}>Incorrect cards: {incorrectCount}</Text>
+                                    <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, setDeckKey, setIncorrectCount, setCorrectCount)} style={styles.trainPressable}>
                                         <FontAwesome name="undo" size={30} color="#000000ff" style={styles.resetButton}/>
                                         <Text style={styles.text}>Retry</Text>
                                     </Pressable>

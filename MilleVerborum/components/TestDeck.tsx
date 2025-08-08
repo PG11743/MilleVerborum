@@ -6,8 +6,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
+import Toast from 'react-native-toast-message';
 import { Swiper, type SwiperCardRefType } from 'rn-swiper-list';
 import IntermissionDisplay from './IntermissionDisplay';
+import ProgressToast from './ProgressToast';
 
 
 
@@ -58,7 +60,8 @@ async function resetDeck(
     wordData:               WordRowType[],
     setWordData:            React.Dispatch<React.SetStateAction<WordRowType[]>>,
     setDeckKey:             React.Dispatch<React.SetStateAction<number>>,
-    setFailCount:           React.Dispatch<React.SetStateAction<number>>
+    setIncorrectCount:      React.Dispatch<React.SetStateAction<number>>,
+    setCorrectCount:        React.Dispatch<React.SetStateAction<number>>
 ) {
     const tempData = [...wordData];
     for (let i = tempData.length - 1; i >= 0; i--) {
@@ -69,7 +72,8 @@ async function resetDeck(
     setFinishedDeck(false);
 
     setTimeout(() => {
-        setFailCount(0);
+        setIncorrectCount(0);
+        setCorrectCount(0);
         setWordData(tempData);
         setDeckKey(prevDeckKey => prevDeckKey + 1);
     }, 400);
@@ -100,10 +104,11 @@ export default function TestDeck(props : Props) {
     const [exitingDeck, setExitingDeck] = useState<boolean>(false);
     const [intermissionVisible, setIntermissionVisible] = useState<boolean>(true);
     const [deckKey, setDeckKey] = useState<number>(0);
-    const [failCount, setFailCount] = useState<number>(0);
+    const [correctCount, setCorrectCount] = useState<number>(0);
+    const [incorrectCount, setIncorrectCount] = useState<number>(0);
     const [currStageMode, setCurrStagemode] = useState<StageMode>(props.stageMode);
 
-    const failCountRef = useRef(failCount);
+    const incorrectCountRef = useRef(incorrectCount);
 
     const ref = useRef<SwiperCardRefType>(null);
 
@@ -112,8 +117,8 @@ export default function TestDeck(props : Props) {
     }, []);
 
     useEffect(() => {
-        failCountRef.current = failCount;
-    }, [failCount]);
+        incorrectCountRef.current = incorrectCount;
+    }, [incorrectCount]);
 
     const renderCard = useCallback((data: WordRowType) => {
         return (
@@ -133,7 +138,7 @@ export default function TestDeck(props : Props) {
         style={[
             styles.overlayLabelContainer,
             {
-            backgroundColor: 'red',
+            backgroundColor: '#f04a3e',
             },
         ]}
         />
@@ -145,7 +150,7 @@ export default function TestDeck(props : Props) {
         style={[
             styles.overlayLabelContainer,
             {
-            backgroundColor: 'green',
+            backgroundColor: '#12e34a',
             },
         ]}
         />
@@ -186,10 +191,26 @@ export default function TestDeck(props : Props) {
                             disableTopSwipe={true}
                             OverlayLabelRight={OverlayLabelRight}
                             OverlayLabelLeft={OverlayLabelLeft}
-                            onSwipeRight={() => {setFailCount(prevFailCount => prevFailCount + 1)}}
+                            onSwipeRight={() => {
+                                setIncorrectCount(prevIncorrectCount => {
+                                    const newCount = prevIncorrectCount + 1;
+                                    incorrectCountRef.current = newCount;
+                                    return newCount;
+                                });
+                                Toast.show({
+                                    type: 'incorrectToast', // or 'error' | 'info'
+                                });
+                            }}
+                            onSwipeLeft={() => {
+                                setCorrectCount(prevCorrectCount => prevCorrectCount + 1);
+                                Toast.show({
+                                    type: 'incorrectToast', // or 'error' | 'info'
+                                });
+                            }}
+
                             onSwipedAll={() => {
-                                if (failCountRef.current === 0) {
-                                    console.log('Issues: ', failCountRef.current, ', looping to practice');
+                                if (incorrectCountRef.current === 0) {
+                                    console.log('Issues: ', incorrectCountRef.current, ', looping to practice');
                                     setTimeout(() => {
                                         console.log('starting promotion display');
                                         setExitingDeck(true);
@@ -197,11 +218,16 @@ export default function TestDeck(props : Props) {
                                         setIntermissionVisible(true);
                                     }, 400);
                                 } else {
-                                    console.log('Issues: ', failCountRef.current, ', placing reset button');
+                                    console.log('Issues: ', incorrectCountRef.current, ', placing reset button');
                                     setFinishedDeck(true);
                                 }
                                 }
                             }
+                        />
+                        <ProgressToast
+                            correct={correctCount}
+                            incorrect={incorrectCount}
+                            remaining={(wordData.length - (correctCount + incorrectCount))}
                         />
                         {(finishedDeck && !exitingDeck) && (
                             <Animated.View
@@ -209,8 +235,8 @@ export default function TestDeck(props : Props) {
                                 exiting={FadeOutUp.duration(400)}
                                 style={styles.testEndContainer}
                             >
-                                <Text style={styles.text}>Incorrect cards: {failCount}</Text>
-                                <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, setDeckKey, setFailCount)} style={styles.testPressable}>
+                                <Text style={styles.text}>Incorrect cards: {incorrectCount}</Text>
+                                <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, setDeckKey, setIncorrectCount, setCorrectCount)} style={styles.testPressable}>
                                     <FontAwesome name="undo" size={30} color="#000000ff" style={styles.resetButton}/>
                                     <Text style={styles.text}>Retry</Text>
                                 </Pressable>
