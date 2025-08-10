@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { PieChart } from 'react-native-gifted-charts';
+import Animated, { SlideInDown, SlideOutUp } from 'react-native-reanimated';
 import Toast, { ToastConfig } from 'react-native-toast-message';
 
 
@@ -17,7 +18,6 @@ export default function ProgressToast (componentProps: Props) {
         {value: componentProps.remaining, color: '#ffffff'}
     ];
     
-    console.log('remaining: ', componentProps.remaining);
     const toastConfig: ToastConfig = {
         incorrectToast: ({ text1, props }) => (
             <View style={[ styles.toastContainer, {backgroundColor: '#ffffff' }]}>
@@ -27,7 +27,15 @@ export default function ProgressToast (componentProps: Props) {
                     innerRadius={35}
                     data={pieData}
                     centerLabelComponent={() => {
-                    return <Text style={{fontSize: 20}}>{componentProps.remaining}</Text>;
+                    return <Animated.View
+                            key={componentProps.remaining}
+                            entering={SlideInDown.springify().stiffness(500).mass(0.2)}
+                            exiting={SlideOutUp}
+                        >
+                            <Text style={{fontSize: 20}}>
+                                {componentProps.remaining}
+                            </Text>
+                        </Animated.View>;
                     }}
                 />
             </View>

@@ -29,12 +29,9 @@ async function getThemeColours (
         const db = await openLanguageDatabase();
         const result: ThemeColours = await db.getFirstAsync("SELECT prime_col, sec_col, ter_col FROM languages where lang_id = ?;", lang_id);
         
-        console.log(result);
-        console.log('primary colour? ', result?.prime_col);
         if (result) {
             setPrimaryColour(result.prime_col);
             setSecondaryColour(result.sec_col);
-            console.log('colours returned from DB. Ter col is: ', result.ter_col);
             if (result.ter_col) {setTertiaryColour(result.ter_col)};
         };
     } catch (error) {
@@ -80,12 +77,9 @@ export default function StagingScreen({initStageMode} : Props) {
     const [secondaryColour, setSecondaryColour] = useState<string>('#000000');
     const [tertiaryColour, setTertiaryColour] = useState<string | null>(null);
 
-    console.log('language ID is ', langId);
 
     useEffect(() => {
-        console.log('running async...');
         const fetchColours = async () => {
-            console.log('getting colours...');
             await getThemeColours(langId, setPrimaryColour, setSecondaryColour, setTertiaryColour);
         }
         fetchColours();

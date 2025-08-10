@@ -27,7 +27,6 @@ async function getCardData (
     langId:             LangRowType["lang_id"],
     setWordData:        React.Dispatch<React.SetStateAction<WordRowType[]>>
 ) {
-    console.log('running getCardData...');
     try{
         const db = await openLanguageDatabase();
         const result = await db.getFirstAsync<{curr_level: number}>('SELECT curr_level FROM languages WHERE lang_id = $lang_id', {$lang_id: langId});

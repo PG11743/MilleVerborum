@@ -25,7 +25,6 @@ async function getCardData (
     langId:             LangRowType["lang_id"],
     setWordData:        React.Dispatch<React.SetStateAction<WordRowType[]>>
 ) {
-    console.log('running getCardData...');
     try{
         const db = await openLanguageDatabase();
         const result = await db.getFirstAsync<{curr_level: number}>('SELECT curr_level FROM languages WHERE lang_id = $lang_id', {$lang_id: langId});
@@ -93,8 +92,6 @@ export default function PracticeDeck(props : Props) {
     }, [wordData]);
 
     const renderFlippedCard = useCallback((data: WordRowType, index: number) => {
-            console.log('checking which color border should be...');
-            console.log('tertiary colour is', (props.tertiaryColour));
         return (
             <Card nativeText={data.nativeWord} foreignText={data.foreignWord}  backgroundColour={props.secondaryColour} textColour={props.primaryColour} borderColour={(props.tertiaryColour) ? props.tertiaryColour : props.primaryColour}/>
         );

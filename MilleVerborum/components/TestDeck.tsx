@@ -27,7 +27,6 @@ async function getCardData (
     langId:             LangRowType["lang_id"],
     setWordData:        React.Dispatch<React.SetStateAction<WordRowType[]>>
 ) {
-    console.log('running getCardData...');
     try{
         const db = await openLanguageDatabase();
         const result = await db.getFirstAsync<{curr_level: number}>('SELECT curr_level FROM languages WHERE lang_id = $lang_id', {$lang_id: langId});
@@ -83,13 +82,11 @@ async function promoteLevel (
     langId:                     LangRowType["lang_id"],
     setStageMode:               React.Dispatch<React.SetStateAction<StageMode>>
 ) {
-    console.log('running promotion...');
     try{
         const db = await openLanguageDatabase();
         const updateLanguageStatement = await db.prepareAsync('UPDATE languages SET curr_level = curr_level + 1 WHERE lang_id = $lang_id AND curr_level <= 99');
         const result = await updateLanguageStatement.executeAsync({$lang_id: langId});
         await updateLanguageStatement.finalizeAsync();
-        console.log(result);
         setStageMode('practice');
     } catch (error) {
         console.error("DB failed to open", error);
@@ -210,15 +207,12 @@ export default function TestDeck(props : Props) {
 
                             onSwipedAll={() => {
                                 if (incorrectCountRef.current === 0) {
-                                    console.log('Issues: ', incorrectCountRef.current, ', looping to practice');
                                     setTimeout(() => {
-                                        console.log('starting promotion display');
                                         setExitingDeck(true);
                                         setCurrStagemode('promotion');
                                         setIntermissionVisible(true);
                                     }, 400);
                                 } else {
-                                    console.log('Issues: ', incorrectCountRef.current, ', placing reset button');
                                     setFinishedDeck(true);
                                 }
                                 }
