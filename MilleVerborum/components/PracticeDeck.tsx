@@ -144,7 +144,7 @@ export default function PracticeDeck(props : Props) {
                                     style={styles.practicePressable}
                                 >
                                     <FontAwesome name="arrow-right" size={30} color="#000000ff" style={styles.resetButton}/>
-                                    <Text style={styles.text}>Begin Training</Text>
+                                    <Text style={styles.text}>Training</Text>
                                 </Pressable>
                             </Animated.View>
                         )}
@@ -201,14 +201,14 @@ const styles = StyleSheet.create({
     marginBottom: 200
   },
   practicePressable: {
-        borderRadius: 10,
+        borderRadius: 100,
         margin: 10,
         paddingVertical: 10,
-        paddingHorizontal: 20,
+        paddingHorizontal: 40,
+        backgroundColor: '#ffffffff',
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
-        borderWidth: 1
   },
   resetButton: {
     justifyContent: 'center',

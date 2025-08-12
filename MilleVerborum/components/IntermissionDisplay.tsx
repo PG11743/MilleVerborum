@@ -217,9 +217,11 @@ const styles = StyleSheet.create({
         marginBottom: 200
     },
     text:   {
-        fontSize: 40
+        fontSize: 40,
+        color: '#ffffff'
     },
     subtext: {
-        fontSize: 20
+        fontSize: 20,
+        color: '#ffffff'
     }
 });

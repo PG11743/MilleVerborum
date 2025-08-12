@@ -232,7 +232,7 @@ export default function TestDeck(props : Props) {
                                 <Text style={styles.text}>Incorrect cards: {incorrectCount}</Text>
                                 <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, setDeckKey, setIncorrectCount, setCorrectCount)} style={styles.testPressable}>
                                     <FontAwesome name="undo" size={30} color="#000000ff" style={styles.resetButton}/>
-                                    <Text style={styles.text}>Retry</Text>
+                                    <Text style={styles.buttonText}>Retry</Text>
                                 </Pressable>
                             </Animated.View>
                         )}
@@ -254,8 +254,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonText: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 30
   },
   cardStyle: {
     width: '90%',
@@ -275,7 +274,7 @@ const styles = StyleSheet.create({
     width: '90%',
   },
   text: {
-    color: '#000000ff',
+    color: '#ffffff',
     fontSize: 30
   },
   overlayLabelContainerStyle: {
@@ -289,14 +288,14 @@ const styles = StyleSheet.create({
     marginBottom: 200
   },
   testPressable: {
-        borderRadius: 10,
-        margin: 10,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'row',
-        borderWidth: 1
+    borderRadius: 100,
+    margin: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 40,
+    backgroundColor: '#ffffffff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
   },
   resetButton: {
     justifyContent: 'center',

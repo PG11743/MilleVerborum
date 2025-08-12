@@ -50,7 +50,7 @@ export default function LanguageScreen() {
     return (
             <GestureHandlerRootView>
                 <LinearGradient
-                    colors={['#00f9ff', '#fdf902']}
+                    colors={['#7700ffff', '#00f9ff']}
                     style={StyleSheet.absoluteFill}
                 />
                     <ScrollView style={styles.scrollView}>

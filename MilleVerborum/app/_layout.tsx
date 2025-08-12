@@ -4,20 +4,26 @@ import { View } from 'react-native';
 export default function RootLayout() {
   return (
     <Stack>
-        <Stack.Screen name="index" options={{ title: 'Home', headerTransparent: true }} />
+        <Stack.Screen name="index" options={{
+            title: 'Home',
+            headerTransparent: true,
+            headerTitleStyle: {color: '#ffffff'},
+            headerTintColor: '#ffffff',
+            }}
+        />
         <Stack.Screen name="LanguageScreen" options={{
             title: 'Select Language',
             headerTransparent: true,
-            headerTitleStyle: {color: '#000000'},
-            headerTintColor: '#000000',
+            headerTitleStyle: {color: '#ffffff'},
+            headerTintColor: '#ffffff',
             headerStyle: {backgroundColor: 'transparent'},
             headerBackground: () => <View style={{ flex: 1, backgroundColor: 'transparent' }}/>}}
         />
         <Stack.Screen name="StagingScreen" options={{
             title: '',
             headerTransparent: true,
-            headerTitleStyle: {color: '#000000'},
-            headerTintColor: '#000000',
+            headerTitleStyle: {color: '#ffffff'},
+            headerTintColor: '#ffffff',
             headerStyle: {backgroundColor: 'transparent'},
             headerBackground: () => <View style={{ flex: 1, backgroundColor: 'transparent' }}/>}}
         />
