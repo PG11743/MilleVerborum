@@ -1,8 +1,18 @@
 import { openLanguageDatabase } from '@/db/openDatabase';
 import { LangRowType, StageMode } from '@/types';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp, LinearTransition, runOnJS } from 'react-native-reanimated';
+import { VerticalStatusProgress } from 'react-native-vertical-status-progress';
+
+type Status = {
+  title: string;
+  subtitle?: string;
+  renderContent?: React.ReactNode;
+  status: string;
+};
+
 
 type Props = {
     stageMode:          StageMode;
@@ -37,13 +47,99 @@ function renderIntermission(
     showAllText:    boolean,
     onComplete:     () => void
 ) {
+
+    
+    const practiceStatuses = [
+        {
+            title: 'Practice',
+            subtitle: '',
+            renderContent: (
+                <Text style={styles.progressSubtitleStyle}>Learn these words before you progress</Text>
+            ),
+            status: 'practice',
+        },
+        {
+            title: 'Training',
+            subtitle: '',
+            renderContent: (
+                <Text style={styles.progressSubtitleStyle}>Get your new words correct</Text>
+            ),
+            status: 'training',
+        },
+        {
+            title: 'Testing',
+            subtitle: '',
+            renderContent: (
+                <Text style={styles.progressSubtitleStyle}>Test your knowledge against all words you have learned</Text>
+            ),
+            status: 'testing',
+        }
+    ];
+
+    const statusColors = 
+        {
+            prevBallColor: '#00c076ff',
+            currentBallColor: '#00c076ff',
+            futureBallColor: '#ffffff',
+            prevStickColor: '#00c076ff',
+            currentStickColor: '#00c076ff',
+            futureStickColor: '#ffffff',
+            prevTitleColor: '#ffffff',
+            currentTitleColor: '#ffffff',
+            futureTitleColor: '#ffffff',
+            prevSubtitleColor: '#ffffff',
+            currentSubtitleColor: '#ffffff',
+            futureSubtitleColor: '#ffffff'
+        };
+
+    const renderCustomBall = (label:Status, idx:number, isPrev: boolean, isFuture: boolean) => (
+        <View style={
+            {
+                backgroundColor: isPrev? '#00c076ff' : '#ffffff',
+                width: 30,
+                height: 30,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 100,
+                marginRight: 20,
+                borderWidth: 3,
+                borderColor: isFuture? '#ffffff' : '#00c076ff'
+            }
+        } >
+            {(isPrev) ? (
+                <FontAwesome name="check" size={10} color='#ffffff' />
+            ) : (
+                <Text style={{ color: isFuture? '#ffffff' : '#00c076ff', fontSize: 10, fontWeight: 'bold' }}>
+                    
+                </Text>
+            )}
+        </View>
+    );
+
+    const renderCustomStick = (label: Status, idx: number, isPrev: boolean, isFuture: boolean) => (
+        <View style={
+            {
+                flex: 1,
+                width: 2,
+                backgroundColor: isFuture? '#ffffff' : '#00c076ff',
+                marginVertical: 5,
+                marginRight: 20
+            }
+        } />
+    );
+
+    const renderCustomChevron = (open:boolean, index:number) => (
+        <View />
+    );
+
+
     switch(stageMode) {
         case    'train':
             return (
                 (showAllText && levelCounter) && (
                     <Animated.View
                         style={styles.levelBox}
-                        layout={LinearTransition.springify().damping(0)}
+                        layout={LinearTransition.springify().damping(100)}
                         exiting={FadeOutUp.duration(400).withCallback(() => {
                             runOnJS(setVisibility)(false);
                         })}
@@ -55,10 +151,21 @@ function renderIntermission(
                         {showSubtext && (
                         <Animated.View
                             entering={FadeInUp.duration(400)}
+                            style={styles.verticalStatusContainerStyle}
                         >
-                            <Text style={styles.subtext}>
-                                Complete 100% to progress
-                            </Text>
+                            <VerticalStatusProgress
+                                statuses={practiceStatuses}
+                                currentStatus='training'
+                                showOrder={true}
+                                titleStyle={styles.progressTitleStyle}
+                                subTitleStyle={styles.progressSubtitleStyle}
+                                statusColors={statusColors}
+                                renderBall={renderCustomBall}
+                                renderStick={renderCustomStick}
+                                renderChevron={renderCustomChevron}
+                                accordion={true}
+                                openAccordionStatus={true}
+                            />
                         </Animated.View>
                         )}
                     </Animated.View>
@@ -69,7 +176,7 @@ function renderIntermission(
                 (showAllText && levelCounter) && (
                     <Animated.View
                         style={styles.levelBox}
-                        layout={LinearTransition.springify().damping(0)}
+                        layout={LinearTransition.springify().damping(100)}
                         exiting={FadeOutUp.duration(400).withCallback(() => {
                             runOnJS(setVisibility)(false);
                         })}
@@ -81,10 +188,21 @@ function renderIntermission(
                         {showSubtext && (
                         <Animated.View
                             entering={FadeInUp.duration(400)}
+                            style={styles.verticalStatusContainerStyle}
                         >
-                            <Text style={styles.subtext}>
-                                Complete 100% of all words to reach level {levelCounter + 1}
-                            </Text>
+                            <VerticalStatusProgress
+                                statuses={practiceStatuses}
+                                currentStatus='testing'
+                                showOrder={true}
+                                titleStyle={styles.progressTitleStyle}
+                                subTitleStyle={styles.progressSubtitleStyle}
+                                statusColors={statusColors}
+                                renderBall={renderCustomBall}
+                                renderStick={renderCustomStick}
+                                renderChevron={renderCustomChevron}
+                                accordion={true}
+                                openAccordionStatus={true}
+                            />
                         </Animated.View>
                         )}
                     </Animated.View>
@@ -110,7 +228,7 @@ function renderIntermission(
                         >
                             {levelCounter < 100 ?(
                             <Text style={styles.subtext}>
-                                You have been promoted to {levelCounter + 1}
+                                You have been promoted to Level {levelCounter + 1}
                             </Text>
                             ) : (
                             <Text style={styles.subtext}>
@@ -127,7 +245,7 @@ function renderIntermission(
                 (showAllText && levelCounter) && (
                     <Animated.View
                         style={styles.levelBox}
-                        layout={LinearTransition.springify().damping(0)}
+                        layout={LinearTransition.springify().damping(100)}
                         exiting={FadeOutUp.duration(400).withCallback(() => {
                             runOnJS(setVisibility)(false);
                         })}
@@ -139,10 +257,21 @@ function renderIntermission(
                         {showSubtext && (
                         <Animated.View
                             entering={FadeInUp.duration(400)}
+                            style={styles.verticalStatusContainerStyle}
                         >
-                            <Text style={styles.subtext}>
-                                Words {(levelCounter * 10)-9} to {levelCounter * 10}
-                            </Text>
+                            <VerticalStatusProgress
+                                statuses={practiceStatuses}
+                                currentStatus='practice'
+                                showOrder={true}
+                                titleStyle={styles.progressTitleStyle}
+                                subTitleStyle={styles.progressSubtitleStyle}
+                                statusColors={statusColors}
+                                renderBall={renderCustomBall}
+                                renderStick={renderCustomStick}
+                                renderChevron={renderCustomChevron}
+                                accordion={true}
+                                openAccordionStatus={true}
+                            />
                         </Animated.View>
                         )}
                     </Animated.View>
@@ -183,7 +312,7 @@ export default function IntermissionDisplay({
             if (showAllText) {
                 setShowAllText(false);
             }
-        }, 5000);
+        }, 8000);
 
         return () => clearTimeout(outroTimer);
     }, []);
@@ -223,5 +352,17 @@ const styles = StyleSheet.create({
     subtext: {
         fontSize: 20,
         color: '#ffffff'
+    },
+    verticalStatusContainerStyle: {
+        marginHorizontal: 30,
+        marginTop: 50
+    },
+    progressTitleStyle : {
+        fontSize: 30
+    },
+    progressSubtitleStyle: {
+        fontSize: 15,
+        color: '#ffffff'
     }
+
 });
