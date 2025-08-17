@@ -152,6 +152,7 @@ function renderIntermission(
                         <Animated.View
                             entering={FadeInUp.duration(400)}
                             style={styles.verticalStatusContainerStyle}
+                            pointerEvents="none"
                         >
                             <VerticalStatusProgress
                                 statuses={practiceStatuses}
@@ -189,6 +190,7 @@ function renderIntermission(
                         <Animated.View
                             entering={FadeInUp.duration(400)}
                             style={styles.verticalStatusContainerStyle}
+                            pointerEvents="none"
                         >
                             <VerticalStatusProgress
                                 statuses={practiceStatuses}
@@ -258,6 +260,7 @@ function renderIntermission(
                         <Animated.View
                             entering={FadeInUp.duration(400)}
                             style={styles.verticalStatusContainerStyle}
+                            pointerEvents="none"
                         >
                             <VerticalStatusProgress
                                 statuses={practiceStatuses}
