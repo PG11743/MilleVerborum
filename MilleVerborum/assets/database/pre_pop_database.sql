@@ -74,3 +74,19 @@ INSERT INTO languages (
     '#FFB81C',
     '#BE3A34'
 );
+
+INSERT INTO languages (
+    lang_name,
+    lang_abv,
+    curr_level,
+    prime_col,
+    sec_col,
+    ter_col
+) values (
+    "Spanish",
+    "ES",
+    null,
+    '#AA151B',
+    '#F1BF00',
+    null
+);

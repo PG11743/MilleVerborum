@@ -5,6 +5,7 @@ import { openDatabaseAsync, SQLiteDatabase } from 'expo-sqlite';
 
 const DB_NAME = 'milleverborum.db';
 
+// A temp solution for resetting the database. Something more clean will be needed eventually
 const wipeFlag = false;
 
 export async function openLanguageDatabase(): Promise<SQLiteDatabase> {
