@@ -3,7 +3,7 @@ import { LangRowType, StageMode } from '@/types';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Animated, { FadeInUp, FadeOutUp, LinearTransition, runOnJS } from 'react-native-reanimated';
+import Animated, { FadeInUp, FadeOutUp, LinearTransition, runOnJS, StretchInX } from 'react-native-reanimated';
 import { VerticalStatusProgress } from 'react-native-vertical-status-progress';
 
 type Status = {
@@ -146,11 +146,11 @@ function renderIntermission(
                         entering={FadeInUp.duration(400)}
                     >
                         <Text style={styles.text}>
-                            Level {levelCounter} Training Round
+                            Level {levelCounter}
                         </Text>
                         {showSubtext && (
                         <Animated.View
-                            entering={FadeInUp.duration(400)}
+                            entering={StretchInX.duration(400)}
                             style={styles.verticalStatusContainerStyle}
                             pointerEvents="none"
                         >
@@ -184,11 +184,11 @@ function renderIntermission(
                         entering={FadeInUp.duration(400)}
                     >
                         <Text style={styles.text}>
-                            Level {levelCounter} Test Round
+                            Level {levelCounter}
                         </Text>
                         {showSubtext && (
                         <Animated.View
-                            entering={FadeInUp.duration(400)}
+                            entering={StretchInX.duration(400)}
                             style={styles.verticalStatusContainerStyle}
                             pointerEvents="none"
                         >
@@ -258,7 +258,7 @@ function renderIntermission(
                         </Text>
                         {showSubtext && (
                         <Animated.View
-                            entering={FadeInUp.duration(400)}
+                            entering={StretchInX.duration(400)}
                             style={styles.verticalStatusContainerStyle}
                             pointerEvents="none"
                         >
@@ -295,7 +295,6 @@ export default function IntermissionDisplay({
     const [showAllText, setShowAllText] = useState<boolean>(true);
     const [levelCounter, setLevelCounter] = useState<LangRowType["lang_level"]>(null);
 
-    console.log('RUNNING INTERMISSION...');
     useEffect(() => {
         getLevelData(langId, setLevelCounter);
     }, []);
@@ -358,7 +357,10 @@ const styles = StyleSheet.create({
     },
     verticalStatusContainerStyle: {
         marginHorizontal: 30,
-        marginTop: 50
+        marginTop: 30,
+        borderTopWidth:2,
+        borderColor: '#ffffff',
+        paddingTop: 30
     },
     progressTitleStyle : {
         fontSize: 30
