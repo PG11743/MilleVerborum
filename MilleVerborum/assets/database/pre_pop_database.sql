@@ -90,3 +90,19 @@ INSERT INTO languages (
     '#F1BF00',
     null
 );
+
+INSERT INTO languages (
+    lang_name,
+    lang_abv,
+    curr_level,
+    prime_col,
+    sec_col,
+    ter_col
+) values (
+    "German",
+    "DE",
+    null,
+    '#000000',
+    '#FFCC00',
+    '#DD0000'
+);
