@@ -30,6 +30,6 @@ export async function openLanguageDatabase(): Promise<SQLiteDatabase> {
     }
                 
 
-    return await openDatabaseAsync(DB_NAME);
+    return await openDatabaseAsync(DB_NAME, {useNewConnection: true});
     // return await openDatabaseAsync(dbPath.replace('file://', ''));
 }

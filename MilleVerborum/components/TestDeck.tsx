@@ -5,7 +5,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
+import Animated, { FadeInUp, SlideInDown, FadeOutUp } from 'react-native-reanimated';
 import Toast from 'react-native-toast-message';
 import { Swiper, type SwiperCardRefType } from 'rn-swiper-list';
 import IntermissionDisplay from './IntermissionDisplay';
@@ -169,7 +169,7 @@ export default function TestDeck(props : Props) {
                 ) : (
                     <Animated.View
                         style={styles.subContainer}
-                        entering={FadeInUp.duration(400)}
+                        entering={SlideInDown.duration(400)}
                         exiting={FadeOutUp.duration(400)}
                         key={deckKey}
                     >
