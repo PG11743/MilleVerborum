@@ -1,6 +1,6 @@
 // openDatabase.ts
 import { Asset } from 'expo-asset';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import { openDatabaseAsync, SQLiteDatabase } from 'expo-sqlite';
 
 const DB_NAME = 'milleverborum.db';
