@@ -18,7 +18,7 @@ async function loadPrebuiltDatabase(sqliteFolder: Directory) {
     const fileDest = new File (sqliteFolder, asset.name + '.' + asset.type);
 
     fileAsset.copy(fileDest);
-    console.log(console.log('listing contents of the sqlite folder: ', sqliteFolder.list()));
+    //console.log(console.log('listing contents of the sqlite folder: ', sqliteFolder.list()));
 
 }
 

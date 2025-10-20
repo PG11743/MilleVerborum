@@ -9,7 +9,7 @@ type Props = {
 };
 
 export default function Card (props : Props) {
-    console.log(props);
+    // console.log(props);
     return (
         <View style={[styles.renderCardContainer, {backgroundColor: props.backgroundColour}]}>
             <View style={[styles.innerCardContainer, {backgroundColor: props.backgroundColour, borderColor: props.borderColour}]}>

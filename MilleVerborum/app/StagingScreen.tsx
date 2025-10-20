@@ -50,21 +50,21 @@ function renderStage(
 ) {
     switch (stageMode) {
         case    'practice':
-            console.log('opening practice display');
+            // console.log('opening practice display');
             // return <DeckDisplay stageMode={stageMode} setStageMode={setStageMode} langId={langId}/>
             return <PracticeDeck langId={langId} setStageMode={setStageMode} stageMode={stageMode} primaryColour={primaryColour} secondaryColour={secondaryColour} tertiaryColour={tertiaryColour} />
         case    'train':
-            console.log('opening training display');
+            // console.log('opening training display');
             // return <DeckDisplay stageMode={stageMode} setStageMode={setStageMode} langId={langId}/>
             return <TrainDeck langId={langId} setStageMode={setStageMode} stageMode={stageMode} primaryColour={primaryColour} secondaryColour={secondaryColour} tertiaryColour={tertiaryColour}/>
         case    'test':
-            console.log('opening test display');
+            // console.log('opening test display');
             // return <DeckDisplay stageMode={stageMode} setStageMode={setStageMode} langId={langId}/>
             return <TestDeck langId={langId} setStageMode={setStageMode} stageMode={stageMode} primaryColour={primaryColour} secondaryColour={secondaryColour} tertiaryColour={tertiaryColour}/>
         case    'promotion':
-            return <IntermissionDisplay stageMode={stageMode} setVisibility={setInterVisible} langId={langId} />;
+            return <IntermissionDisplay stageMode={stageMode} onComplete={() => {setStageMode('practice')}} langId={langId} />;
         default:
-            console.log('opening level display');
+            // console.log('opening level display');
             // return <LevelDisplay stageMode={stageMode} setStageMode={setStageMode} langId={langId}/>
     }
 }

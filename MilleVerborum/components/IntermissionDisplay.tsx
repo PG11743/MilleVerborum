@@ -1,10 +1,96 @@
 import { openLanguageDatabase } from '@/db/openDatabase';
 import { LangRowType, StageMode } from '@/types';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Animated, { FadeInUp, FadeOutUp, LinearTransition, runOnJS, StretchInX } from 'react-native-reanimated';
+import React, {FC, useEffect, useState } from 'react';
+import { StatusBar, PixelRatio, Pressable, StyleSheet, Text, View } from 'react-native';
+import { scheduleOnRN } from 'react-native-worklets'
+import Animated, { FadeInUp, FadeOutUp, FadeInDown, LinearTransition, StretchInX, useSharedValue, withDelay, withTiming, Easing } from 'react-native-reanimated';
 import { VerticalStatusProgress } from 'react-native-vertical-status-progress';
+
+import {
+  Canvas,
+  Path,
+  SkFont,
+  Skia,
+  Group,
+  matchFont,
+  useFont,
+  Fill,
+  center
+} from "@shopify/react-native-skia";
+import type {SharedValue} from 'react-native-reanimated';
+
+interface CircularProgressProps {
+  strokeWidth: number;
+  radius: number;
+  percentageComplete: SharedValue<number>;
+  centerLevel: number;
+  incrementLevel: boolean;
+}
+
+// const animationState = useValue(0);
+    const radius = PixelRatio.roundToNearestPixel(130);
+
+const DonutChart: FC<CircularProgressProps> = ({
+  strokeWidth,
+  radius,
+  percentageComplete,
+  centerLevel,
+  incrementLevel
+}) => {
+  const innerRadius = radius - strokeWidth / 2;
+
+  const path = Skia.Path.Make();
+  path.addCircle(radius, radius, innerRadius);
+
+const origin = {
+  x: radius,
+  y: radius,
+};
+
+const transform = [
+  {
+    rotate: -Math.PI / 2,
+  },
+];
+  return (
+    <View>
+        <Canvas style={styles.ringChartContainer}>
+              <Group origin = {origin} transform={transform}>
+          <Path
+            path={path}
+            color="white"
+            style="stroke"
+            strokeJoin="round"
+            strokeWidth={strokeWidth}
+            strokeCap="round"
+            start={0}
+            end={percentageComplete}
+          />
+          </Group>
+        </Canvas>
+        {!incrementLevel ? (
+          <Animated.View
+            key={centerLevel}
+            style={styles.textContainer}
+            entering={FadeInDown.duration(400).delay(500)}
+            exiting={FadeOutUp.duration(400)}
+          >
+            <Text style={styles.centerText}>{centerLevel}</Text>
+          </Animated.View>
+        ) : (
+          <Animated.View
+            key={centerLevel+1}
+            style={styles.textContainer}
+            entering={FadeInDown.duration(400)}
+          >
+            <Text style={styles.centerText}>{centerLevel + 1}</Text>
+          </Animated.View>
+        )}
+    </View>
+  );
+};
+
 
 type Status = {
   title: string;
@@ -16,9 +102,9 @@ type Status = {
 
 type Props = {
     stageMode:          StageMode;
-    setVisibility:      React.Dispatch<React.SetStateAction<boolean>>;
+    //setVisibility:      React.Dispatch<React.SetStateAction<boolean>>;
     langId:             LangRowType["lang_id"];
-    onComplete?:        () => void;
+    onComplete:        () => void;
 };
 
 async function getLevelData (
@@ -42,10 +128,14 @@ async function getLevelData (
 function renderIntermission(
     stageMode:      StageMode,
     levelCounter:   LangRowType["lang_level"],
-    setVisibility:  React.Dispatch<React.SetStateAction<boolean>>,
+    //setVisibility:  React.Dispatch<React.SetStateAction<boolean>>,
+    strokeWidth:    number,
+    animationState: SharedValue<number>,
     showSubtext:    boolean,
     showAllText:    boolean,
-    onComplete:     () => void
+    onComplete:     () => void,
+    incrementLevel: boolean,
+    centerLevel:    number
 ) {
 
     
@@ -141,7 +231,7 @@ function renderIntermission(
                         style={styles.levelBox}
                         layout={LinearTransition.springify().damping(100)}
                         exiting={FadeOutUp.duration(400).withCallback(() => {
-                            runOnJS(setVisibility)(false);
+                            scheduleOnRN(onComplete); // Use optional chaining to prevent crashing if undefined
                         })}
                         entering={FadeInUp.duration(400)}
                     >
@@ -179,7 +269,7 @@ function renderIntermission(
                         style={styles.levelBox}
                         layout={LinearTransition.springify().damping(100)}
                         exiting={FadeOutUp.duration(400).withCallback(() => {
-                            runOnJS(setVisibility)(false);
+                            scheduleOnRN(onComplete); // Use optional chaining to prevent crashing if undefined
                         })}
                         entering={FadeInUp.duration(400)}
                     >
@@ -217,27 +307,26 @@ function renderIntermission(
                         style={styles.levelBox}
                         layout={LinearTransition.springify().damping(0)}
                         exiting={FadeOutUp.duration(400).withCallback(() => {
-                            runOnJS(onComplete)(); // Use optional chaining to prevent crashing if undefined
+                            scheduleOnRN(onComplete); // Use optional chaining to prevent crashing if undefined
                         })}
                         entering={FadeInUp.duration(400)}
                     >
-                        <Text style={styles.text}>
-                            Test complete!
-                        </Text>
-                        {showSubtext && (
-                        <Animated.View
-                            entering={FadeInUp.duration(400)}
-                        >
-                            {levelCounter < 100 ?(
-                            <Text style={styles.subtext}>
-                                You have been promoted to Level {levelCounter + 1}
-                            </Text>
-                            ) : (
-                            <Text style={styles.subtext}>
-                                You have been won c:
-                            </Text>
-                            )}
-                        </Animated.View>
+                        {levelCounter < 100 ?(
+                            <DonutChart
+                                radius={radius}
+                                strokeWidth={strokeWidth}
+                                percentageComplete={animationState}
+                                centerLevel={levelCounter-1}
+                                incrementLevel={incrementLevel}
+                            />
+                        ) : (
+                            <Animated.View
+                                entering={FadeInUp.duration(400)}
+                            >
+                                <Text style={styles.subtext}>
+                                    You have been won c:
+                                </Text>
+                            </Animated.View>
                         )}
                     </Animated.View>
                 )
@@ -249,7 +338,7 @@ function renderIntermission(
                         style={styles.levelBox}
                         layout={LinearTransition.springify().damping(100)}
                         exiting={FadeOutUp.duration(400).withCallback(() => {
-                            runOnJS(setVisibility)(false);
+                            scheduleOnRN(onComplete); // Use optional chaining to prevent crashing if undefined
                         })}
                         entering={FadeInUp.duration(400)}
                     >
@@ -286,14 +375,22 @@ function renderIntermission(
 
 export default function IntermissionDisplay({
         stageMode,
-        setVisibility,
+        // setVisibility,
         langId,
-        onComplete = () => {}
+        onComplete
     } : Props) {
 
     const [showSubtext, setShowSubtext] = useState<boolean>(false);
     const [showAllText, setShowAllText] = useState<boolean>(true);
     const [levelCounter, setLevelCounter] = useState<LangRowType["lang_level"]>(null);
+    const [centerLevel, setcenterLevel] = useState<number>(99);
+    const [incrementLevel, setIncrementLevel] = useState<boolean>(false);
+
+    const STROKE_WIDTH = 12;
+    const targetPercentage = 1;
+    const animationState = useSharedValue(0);
+
+
 
     useEffect(() => {
         getLevelData(langId, setLevelCounter);
@@ -319,6 +416,25 @@ export default function IntermissionDisplay({
         return () => clearTimeout(outroTimer);
     }, []);
 
+    useEffect(() => {
+        animationState.value = withDelay(
+            2500,
+            withTiming(
+                targetPercentage, 
+                {
+                    duration: 2500,
+                    easing: Easing.out(Easing.exp),
+                }
+            )
+        );
+
+        setTimeout(() => {
+          setIncrementLevel(true);
+        },
+      4500);
+    }, []);
+
+
     function skip() {
         if (!showSubtext) {
             setShowSubtext(true);
@@ -329,7 +445,7 @@ export default function IntermissionDisplay({
 
     return (
         <Pressable onPress={skip} style={styles.container}>
-                {() => renderIntermission(stageMode, levelCounter, setVisibility, showSubtext, showAllText, onComplete)}
+                {renderIntermission(stageMode, levelCounter, STROKE_WIDTH, animationState, showSubtext, showAllText, onComplete, incrementLevel, centerLevel)}
         </Pressable>
     );
 }
@@ -368,6 +484,21 @@ const styles = StyleSheet.create({
     progressSubtitleStyle: {
         fontSize: 15,
         color: '#ffffff'
-    }
+    },
+          ringChartContainer: {
+    width: radius * 2,
+    height: radius * 2,
+  },
+    textContainer: {
+    ...StyleSheet.absoluteFillObject, // covers entire Canvas
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  centerText: {
+    fontSize: 96,
+    color: "white",
+    fontWeight: "bold",
+  }
+
 
 });

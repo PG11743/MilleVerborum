@@ -83,11 +83,12 @@ async function promoteLevel (
     setStageMode:               React.Dispatch<React.SetStateAction<StageMode>>
 ) {
     try{
+        console.log('promoting level...');
         const db = await openLanguageDatabase();
         const updateLanguageStatement = await db.prepareAsync('UPDATE languages SET curr_level = curr_level + 1 WHERE lang_id = $lang_id AND curr_level <= 99');
         const result = await updateLanguageStatement.executeAsync({$lang_id: langId});
         await updateLanguageStatement.finalizeAsync();
-        setStageMode('practice');
+        setStageMode('promotion');
     } catch (error) {
         console.error("DB failed to open", error);
     }
@@ -159,11 +160,11 @@ export default function TestDeck(props : Props) {
         <GestureHandlerRootView>
             {intermissionVisible ? (
                 <IntermissionDisplay
-                    setVisibility={setIntermissionVisible}
                     stageMode={currStageMode}
                     langId={props.langId}
                     onComplete={() => {
-                        promoteLevel(props.langId, props.setStageMode);
+                        setIntermissionVisible(false);
+                        //promoteLevel(props.langId, props.setStageMode);
                     }}
                 />
                 ) : (
@@ -209,8 +210,8 @@ export default function TestDeck(props : Props) {
                                 if (incorrectCountRef.current === 0) {
                                     setTimeout(() => {
                                         setExitingDeck(true);
-                                        setCurrStagemode('promotion');
-                                        setIntermissionVisible(true);
+                                        promoteLevel(props.langId, props.setStageMode);
+                                        // setIntermissionVisible(true);
                                     }, 400);
                                 } else {
                                     setFinishedDeck(true);

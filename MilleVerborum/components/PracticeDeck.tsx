@@ -101,7 +101,7 @@ export default function PracticeDeck(props : Props) {
     return (
         <GestureHandlerRootView>
             {intermissionVisible ? (
-                <IntermissionDisplay setVisibility={setIntermissionVisible} stageMode={props.stageMode} langId={props.langId}/>
+                <IntermissionDisplay onComplete={() => setIntermissionVisible(false)} stageMode={props.stageMode} langId={props.langId}/>
                 ) : (
                     <Animated.View
                         style={styles.subContainer}
