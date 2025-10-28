@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 type Props = {
     nativeText :        string;
     foreignText?:       string;
+    pronunciation?:     string;
     backgroundColour:   string;
     textColour:         string;
     borderColour:       string;
@@ -20,6 +21,9 @@ export default function Card (props : Props) {
                     </View>
                     <View style={[styles.foreignBox, {borderColor: props.borderColour}]}>
                         <Text style={[styles.subtext, {color: props.textColour}]}>{props.foreignText}</Text>
+                    </View>
+                    <View>
+                        <Text style={[styles.subtext, {color: props.textColour}]}>[{props.pronunciation}]</Text>
                     </View>
                 </View>
                 ) : (

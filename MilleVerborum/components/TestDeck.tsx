@@ -31,7 +31,7 @@ async function getCardData (
         const db = await openLanguageDatabase();
         const result = await db.getFirstAsync<{curr_level: number}>('SELECT curr_level FROM languages WHERE lang_id = $lang_id', {$lang_id: langId});
         if (result) {
-            const wordRows = await db.getAllAsync<{word_id: number, native_word: string, foreign_word: string, corr_count: number, fail_count: number}>('SELECT word_id, native_word, foreign_word, corr_count, fail_count FROM words WHERE lang_id = $lang_id AND word_rank <= $higher_range', {$lang_id: langId, $higher_range: (result.curr_level * 10)});
+            const wordRows = await db.getAllAsync<{word_id: number, native_word: string, foreign_word: string, pronunciation: string, corr_count: number, fail_count: number}>('SELECT word_id, native_word, foreign_word, pronunciation, corr_count, fail_count FROM words WHERE lang_id = $lang_id AND word_rank BETWEEN $lower_range AND $higher_range', {$lang_id: langId, $lower_range: (result.curr_level * 10)-9, $higher_range: (result.curr_level * 10)});
 
             for (let i = wordRows.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -42,6 +42,7 @@ async function getCardData (
                 wordId: row.word_id,
                 nativeWord: row.native_word,
                 foreignWord: row.foreign_word,
+                pronunciation: row.pronunciation,
                 corrCount: row.corr_count,
                 failCount: row.fail_count
             })));
@@ -126,7 +127,7 @@ export default function TestDeck(props : Props) {
 
     const renderFlippedCard = useCallback((data: WordRowType, index: number) => {
         return (
-            <Card nativeText={data.nativeWord} foreignText={data.foreignWord}  backgroundColour={props.secondaryColour} textColour={props.primaryColour} borderColour={(props.tertiaryColour) ? props.tertiaryColour : props.primaryColour}/>
+            <Card nativeText={data.nativeWord} foreignText={data.foreignWord} pronunciation={data.pronunciation} backgroundColour={props.secondaryColour} textColour={props.primaryColour} borderColour={(props.tertiaryColour) ? props.tertiaryColour : props.primaryColour}/>
         );
     }, [wordData]);
 

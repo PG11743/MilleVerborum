@@ -11,6 +11,7 @@ export type WordRowType = {
     wordId:         number
     nativeWord:     string,
     foreignWord:    string,
+    pronunciation:  string,
     corrCount:      number,
     failCount:      number
 };
