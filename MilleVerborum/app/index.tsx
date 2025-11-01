@@ -38,7 +38,7 @@ export default function Index() {
                     >
                         {/* Shows behind the mask, you can put anything here, such as an image */}
                         <LinearGradient
-                            colors={['#7700ffff', '#00f9ff']}
+                            colors={['#00f9ff', '#7700ffff']}
                             style={StyleSheet.absoluteFill}
                         />
                     </MaskedView>
@@ -69,7 +69,7 @@ export default function Index() {
                     >
                         {/* Shows behind the mask, you can put anything here, such as an image */}
                         <LinearGradient
-                            colors={['#7700ffff', '#00f9ff']}
+                            colors={['#00f9ff', '#7700ffff']}
                             style={StyleSheet.absoluteFill}
                         />
                     </MaskedView>

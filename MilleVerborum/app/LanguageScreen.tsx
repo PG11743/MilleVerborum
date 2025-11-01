@@ -9,6 +9,7 @@ import { StatusBar, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView, Pressable, ScrollView } from 'react-native-gesture-handler';
 import Animated, { LinearTransition, ZoomIn, ZoomOut } from 'react-native-reanimated';
 import LanguageSelect from './LanguageSelect';
+import MaskedView from '@react-native-masked-view/masked-view';
 
 const hasMounted = useRef(false);
 
@@ -67,21 +68,42 @@ export default function LanguageScreen() {
                             ))
                         }
                     </ScrollView>
-                    <Pressable style={styles.modalBox} onPress={
-                        () =>{
-                            hasMounted.current = true;
-                            setModalVisibility(true);
-                        }}
-                    >
-                        <View style={styles.modalButton}>
-                            <FontAwesome name="plus" size={20} style={styles.buttonIcon} />
-                            <Text style={styles.modalButtonText}>Add language</Text>
-                        </View>
-                    </Pressable>
-                <LanguageSelect
-                    isModalVisible={isModalVisible}
-                    setModalVisibility={setModalVisibility}
-                />
+                    <View style={styles.modalBox}>
+                        <Pressable style={styles.modalButton} onPress={
+                            () =>{
+                                hasMounted.current = true;
+                                setModalVisibility(true);
+                            }}
+                        >
+                            <MaskedView
+                            style={{ flex: 1, flexDirection: 'row', height: '100%'}}
+                            maskElement={
+                                <View
+                                    style={{
+                                        // Transparent background because mask is based off alpha channel.
+                                        backgroundColor: 'transparent',
+                                        flex: 1,
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        flexDirection: 'row'
+                                    }}
+                                >
+                                    <FontAwesome name="plus" size={20} style={styles.buttonIcon} />
+                                    <Text style={styles.buttonLabel}>Add language</Text>
+                                </View>
+                            }
+                            >
+                                <LinearGradient
+                                    colors={['#00f9ff', '#7700ffff']}
+                                    style={StyleSheet.absoluteFill}
+                                />
+                            </MaskedView>
+                        </Pressable>
+                    </View>
+                    <LanguageSelect
+                        isModalVisible={isModalVisible}
+                        setModalVisibility={setModalVisibility}
+                    />
                 <StatusBar translucent backgroundColor="transparent" />
             </GestureHandlerRootView>
     );
@@ -105,6 +127,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
+        minHeight: 75,
+        maxWidth: 300
+    },
+    buttonLabel: {
+        fontSize:       20,
+        color:          '#000000ff'
     },
     buttonIcon: {
         marginRight: 18,
@@ -114,9 +142,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 30
-    },
-    modalButtonText: {
-        fontSize: 20
     },
     scrollView: {
         marginTop: 100
