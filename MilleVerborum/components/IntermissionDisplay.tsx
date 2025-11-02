@@ -423,7 +423,7 @@ export default function IntermissionDisplay({
                 targetPercentage, 
                 {
                     duration: 2500,
-                    easing: Easing.out(Easing.exp),
+                    easing: Easing.inOut(Easing.exp),
                 }
             )
         );
