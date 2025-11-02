@@ -52,7 +52,9 @@ const styles = StyleSheet.create({
     toastContainer: {
         marginTop: 50,
         flex: 1,
-        borderRadius: 100
+        borderRadius: 100,
+        borderWidth: 3,
+        borderColor: '#00f9ff'
     },
     renderCardContainer: {
         flex: 1,
