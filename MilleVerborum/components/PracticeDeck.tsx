@@ -3,11 +3,13 @@ import { openLanguageDatabase } from '@/db/openDatabase';
 import { LangRowType, StageMode, WordRowType } from '@/types';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { FadeInUp, FadeOutUp, SlideInDown, SlideInUp } from 'react-native-reanimated';
 import { Swiper, type SwiperCardRefType } from 'rn-swiper-list';
 import IntermissionDisplay from './IntermissionDisplay';
+import MaskedView from '@react-native-masked-view/masked-view';
+import { LinearGradient } from 'expo-linear-gradient';
 
 
 
@@ -131,8 +133,33 @@ export default function PracticeDeck(props : Props) {
                                 style={styles.practiceEndContainer}
                             >
                                 <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, setDeckKey)} style={styles.practicePressable}>
-                                    <FontAwesome name="undo" size={30} color="#000000ff" style={styles.resetButton}/>
-                                    <Text style={styles.text}>Reset</Text>
+                                    <MaskedView
+                                    style={{ flex: 1, flexDirection: 'row', height: '100%' }}
+                                    maskElement={
+                                        <View
+                                            style={{
+                                                // Transparent background because mask is based off alpha channel.
+                                                backgroundColor: 'transparent',
+                                                flex: 1,
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                            }}
+                                        >
+                                            <View
+                                                style={{flexDirection: 'row'}}
+                                            >
+                                                <FontAwesome name="undo" size={30} color="#000000ff" style={styles.buttonIcon}/>
+                                                <Text style={styles.text}>Reset</Text>
+                                            </View>
+                                        </View>
+                                    }
+                                    >
+                                        {/* Shows behind the mask, you can put anything here, such as an image */}
+                                        <LinearGradient
+                                            colors={['#00f9ff', '#7700ffff']}
+                                            style={StyleSheet.absoluteFill}
+                                        />
+                                    </MaskedView>
                                 </Pressable>
                                 <Pressable
                                     onPress={() => {
@@ -144,8 +171,33 @@ export default function PracticeDeck(props : Props) {
                                     }
                                     style={styles.practicePressable}
                                 >
-                                    <FontAwesome name="arrow-right" size={30} color="#000000ff" style={styles.resetButton}/>
-                                    <Text style={styles.text}>Training</Text>
+                                    <MaskedView
+                                    style={{ flex: 1, flexDirection: 'row', height: '100%' }}
+                                    maskElement={
+                                        <View
+                                            style={{
+                                                // Transparent background because mask is based off alpha channel.
+                                                backgroundColor: 'transparent',
+                                                flex: 1,
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                            }}
+                                        >
+                                            <View
+                                                style={{flexDirection: 'row'}}
+                                            >
+                                                <FontAwesome name="arrow-right" size={30} color="#000000" style={styles.buttonIcon}/>
+                                                <Text style={styles.text}>Training</Text>
+                                            </View>
+                                        </View>
+                                    }
+                                    >
+                                        {/* Shows behind the mask, you can put anything here, such as an image */}
+                                        <LinearGradient
+                                            colors={['#00f9ff', '#7700ffff']}
+                                            style={StyleSheet.absoluteFill}
+                                        />
+                                    </MaskedView>
                                 </Pressable>
                             </Animated.View>
                         )}
@@ -210,10 +262,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
+        minHeight: 75,
+        maxWidth: 260
   },
-  resetButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 10
-  }
+    buttonIcon: {
+    marginRight: 18,
+    color:          '#000000ff'
+    }
 });

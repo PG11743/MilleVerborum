@@ -10,6 +10,8 @@ import Toast from 'react-native-toast-message';
 import { Swiper, type SwiperCardRefType } from 'rn-swiper-list';
 import IntermissionDisplay from './IntermissionDisplay';
 import ProgressToast from './ProgressToast';
+import MaskedView from '@react-native-masked-view/masked-view';
+import { LinearGradient } from 'expo-linear-gradient';
 
 
 
@@ -185,8 +187,33 @@ export default function TrainDeck(props : Props) {
                                 >
                                     <Text style={styles.text}>No wrong cards!</Text>
                                     <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, setDeckKey, setIncorrectCount, setCorrectCount)} style={styles.trainPressable}>
-                                        <FontAwesome name="undo" size={30} color="#000000ff" style={styles.resetButton}/>
-                                        <Text style={styles.buttonText}>Retry</Text>
+                                                                                <MaskedView
+                                        style={{ flex: 1, flexDirection: 'row', height: '100%' }}
+                                        maskElement={
+                                            <View
+                                                style={{
+                                                    // Transparent background because mask is based off alpha channel.
+                                                    backgroundColor: 'transparent',
+                                                    flex: 1,
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                }}
+                                            >
+                                                <View
+                                                    style={{flexDirection: 'row'}}
+                                                >
+                                                    <FontAwesome name="undo" size={30} color="#000000ff" style={styles.buttonIcon}/>
+                                                    <Text style={styles.buttonText}>Retry</Text>
+                                                </View>
+                                            </View>
+                                        }
+                                        >
+                                            {/* Shows behind the mask, you can put anything here, such as an image */}
+                                            <LinearGradient
+                                                colors={['#00f9ff', '#7700ffff']}
+                                                style={StyleSheet.absoluteFill}
+                                            />
+                                        </MaskedView>
                                     </Pressable>
                                     <Pressable
                                         onPress={() => {
@@ -198,8 +225,33 @@ export default function TrainDeck(props : Props) {
                                         }
                                         style={styles.trainPressable}
                                     >
-                                        <FontAwesome name="arrow-right" size={30} color="#000000ff" style={styles.resetButton}/>
-                                        <Text style={styles.buttonText}>Promotion</Text>
+                                        <MaskedView
+                                        style={{ flex: 1, flexDirection: 'row', height: '100%' }}
+                                        maskElement={
+                                            <View
+                                                style={{
+                                                    // Transparent background because mask is based off alpha channel.
+                                                    backgroundColor: 'transparent',
+                                                    flex: 1,
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                }}
+                                            >
+                                                <View
+                                                    style={{flexDirection: 'row'}}
+                                                >
+                                                    <FontAwesome name="arrow-right" size={30} color="#000000ff" style={styles.buttonIcon}/>
+                                                    <Text style={styles.buttonText}>Promotion</Text>
+                                                </View>
+                                            </View>
+                                        }
+                                        >
+                                            {/* Shows behind the mask, you can put anything here, such as an image */}
+                                            <LinearGradient
+                                                colors={['#00f9ff', '#7700ffff']}
+                                                style={StyleSheet.absoluteFill}
+                                            />
+                                        </MaskedView>
                                     </Pressable>
                                 </Animated.View>
                             ) : (
@@ -210,8 +262,33 @@ export default function TrainDeck(props : Props) {
                                 >
                                     <Text style={styles.text}>Incorrect cards: {incorrectCount}</Text>
                                     <Pressable onPress={() => resetDeck(setFinishedDeck, wordData, setWordData, setDeckKey, setIncorrectCount, setCorrectCount)} style={styles.trainPressable}>
-                                        <FontAwesome name="undo" size={30} color="#000000ff" style={styles.resetButton}/>
-                                        <Text style={styles.buttonText}>Retry</Text>
+                                        <MaskedView
+                                        style={{ flex: 1, flexDirection: 'row', height: '100%' }}
+                                        maskElement={
+                                            <View
+                                                style={{
+                                                    // Transparent background because mask is based off alpha channel.
+                                                    backgroundColor: 'transparent',
+                                                    flex: 1,
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                }}
+                                            >
+                                                <View
+                                                    style={{flexDirection: 'row'}}
+                                                >
+                                                    <FontAwesome name="undo" size={30} color="#000000ff" style={styles.buttonIcon}/>
+                                                    <Text style={styles.buttonText}>Retry</Text>
+                                                </View>
+                                            </View>
+                                        }
+                                        >
+                                            {/* Shows behind the mask, you can put anything here, such as an image */}
+                                            <LinearGradient
+                                                colors={['#00f9ff', '#7700ffff']}
+                                                style={StyleSheet.absoluteFill}
+                                            />
+                                        </MaskedView>
                                     </Pressable>
                                 </Animated.View>
                             )
@@ -276,10 +353,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
+        minHeight: 75,
+        maxWidth: 260
   },
-  resetButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 10
-  }
+    buttonIcon: {
+    marginRight: 18,
+    color:          '#000000ff'
+    }
 });
