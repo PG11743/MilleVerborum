@@ -106,3 +106,19 @@ INSERT INTO languages (
     '#FFCC00',
     '#DD0000'
 );
+
+INSERT INTO languages (
+    lang_name,
+    lang_abv,
+    curr_level,
+    prime_col,
+    sec_col,
+    ter_col
+) values (
+    "Russian",
+    "RU",
+    null,
+    '#0036A7',
+    '#D62718',
+    '#FFFFFF'
+);
