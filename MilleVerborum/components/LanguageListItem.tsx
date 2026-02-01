@@ -1,6 +1,7 @@
 import { openLanguageDatabase } from '@/db/openDatabase';
 import { LangRowType } from '@/types';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
@@ -9,6 +10,7 @@ type Props = | {
     activeOnly: true;
     item:       LangRowType;
     setActiveLoading:           React.Dispatch<React.SetStateAction<boolean>>;
+    setAlphabetVisibility:      React.Dispatch<React.SetStateAction<boolean>>;
 } | {
     activeOnly: false;
     item:       LangRowType;
@@ -77,6 +79,17 @@ export default function LanguageListItem(props : Props) {
                         <FontAwesome name="trash" size={30} color="#ffffff"/>
                     </TouchableOpacity>
                     )}
+                    renderLeftActions={() =>(
+                    <TouchableOpacity
+                        style={styles.alphabetAction}
+                        onPress={() => 
+                            //deactiveLanguage(props.item, props.setActiveLoading)
+                            props.setAlphabetVisibility(true)
+                        }
+                    >
+                        <MaterialCommunityIcons name="alphabet-greek" size={30} color="#ffffff" />
+                    </TouchableOpacity>
+                    )}
                 >
                     <Pressable onPress={() => {router.push({pathname: '/StagingScreen', params: {lang_id: props.item.lang_id}});}} style={styles.activeItemContainer}>
                         <Text>{props.item.lang_name}</Text>
@@ -116,6 +129,14 @@ unactiveItemContainer: {
   },
   deleteAction: {
     backgroundColor: '#ff3b30',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 80,
+    marginBottom: 2,
+    borderRadius: 10
+  },
+  alphabetAction: {
+    backgroundColor: '#12e34a',
     justifyContent: 'center',
     alignItems: 'center',
     width: 80,

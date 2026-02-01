@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS languages;
 DROP TABLE IF EXISTS words;
-DROP TABLE IF EXISTS test;
+DROP TABLE IF EXISTS alphabet;
 
 -- PRAGMA foreign_keys = ON;
 
@@ -25,6 +25,15 @@ CREATE TABLE IF NOT EXISTS words (
     fail_count      INTEGER     NOT NULL,
     FOREIGN KEY (lang_id) REFERENCES languages (lang_id),
     UNIQUE (lang_id, word_rank)
+);
+
+CREATE TABLE IF NOT EXISTS alphabet (
+    letter_id       INTEGER     PRIMARY KEY,
+    lang_id         INTEGER     NOT NULL,
+    letter_symbol   TEXT        NOT NULL,
+    pronunciation   TEXT        NOT NULL,
+    explanation     TEXT,
+    FOREIGN KEY (lang_id) REFERENCES languages (lang_id)
 );
 
 INSERT INTO languages (

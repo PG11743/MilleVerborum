@@ -9,6 +9,7 @@ import { StatusBar, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView, Pressable, ScrollView } from 'react-native-gesture-handler';
 import Animated, { LinearTransition, ZoomIn, ZoomOut } from 'react-native-reanimated';
 import LanguageSelect from './LanguageSelect';
+import Alphabet from './alphabet';
 import MaskedView from '@react-native-masked-view/masked-view';
 
 const hasMounted = useRef(false);
@@ -30,6 +31,7 @@ export default function LanguageScreen() {
     const [languages, setLanguages] = useState<LangRowType[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [isModalVisible, setModalVisibility] = useState<boolean>(false);
+    const [isAlphabetVisible, setAlphabetVisibility] = useState<boolean>(false);
 
     useFocusEffect(
         useCallback(() => {
@@ -63,7 +65,7 @@ export default function LanguageScreen() {
                                     entering={hasMounted.current ? ZoomIn : undefined}
                                     exiting={ZoomOut}
                                 >
-                                    <LanguageListItem key={item.lang_id} item={{lang_id: item.lang_id, lang_name: item.lang_name}} setActiveLoading={setLoading} activeOnly={true}/>
+                                    <LanguageListItem key={item.lang_id} item={{lang_id: item.lang_id, lang_name: item.lang_name}} setActiveLoading={setLoading} setAlphabetVisibility={setAlphabetVisibility} activeOnly={true}/>
                                 </Animated.View>
                             ))
                         }
@@ -103,6 +105,10 @@ export default function LanguageScreen() {
                     <LanguageSelect
                         isModalVisible={isModalVisible}
                         setModalVisibility={setModalVisibility}
+                    />
+                    <Alphabet
+                        isAlphabetVisible={isAlphabetVisible}
+                        setAlphabetVisibility={setAlphabetVisibility}
                     />
                 <StatusBar translucent backgroundColor="transparent" />
             </GestureHandlerRootView>
