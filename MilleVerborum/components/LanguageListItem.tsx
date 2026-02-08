@@ -11,6 +11,7 @@ type Props = | {
     item:       LangRowType;
     setActiveLoading:           React.Dispatch<React.SetStateAction<boolean>>;
     setAlphabetVisibility:      React.Dispatch<React.SetStateAction<boolean>>;
+    setLangId:                  React.Dispatch<React.SetStateAction<number>>;
 } | {
     activeOnly: false;
     item:       LangRowType;
@@ -82,9 +83,10 @@ export default function LanguageListItem(props : Props) {
                     renderLeftActions={() =>(
                     <TouchableOpacity
                         style={styles.alphabetAction}
-                        onPress={() => 
-                            //deactiveLanguage(props.item, props.setActiveLoading)
-                            props.setAlphabetVisibility(true)
+                        onPress={() => {
+                                props.setLangId(props.item.lang_id);
+                                props.setAlphabetVisibility(true);
+                            }
                         }
                     >
                         <MaterialCommunityIcons name="alphabet-greek" size={30} color="#ffffff" />

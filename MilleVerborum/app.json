@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "MilleVerborum",
+    "name": "Mille Verba",
     "slug": "MilleVerborum",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/MV.png",
     "scheme": "milleverborum",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,

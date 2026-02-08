@@ -1,37 +1,51 @@
 import LanguageListItem from '@/components/LanguageListItem';
 import { openLanguageDatabase } from '@/db/openDatabase';
 import { LangRowType } from '@/types';
+import { LetterRowType } from '@/types';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import LottieView from 'lottie-react-native';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, StyleSheet, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import AlphabetListItem from '@/components/AlphabetListItem';
 
 type Props = {
     isAlphabetVisible: boolean;
     setAlphabetVisibility: React.Dispatch<React.SetStateAction<boolean>>;
+    langId:    number;
 }
 
-async function getInactiveLanguages(setLanguages: Function, setLoading: Function) {
+async function getInactiveletters(setLetters: Function, setLoading: Function) {
     try {
         const db = await openLanguageDatabase();
-        const result = await db.getAllAsync("SELECT lang_id, lang_name FROM languages WHERE curr_level IS NULL;");
-        setLanguages(result);
+        const result = await db.getAllAsync("SELECT lang_id, lang_name FROM letters WHERE curr_level IS NULL;");
+        setLetters(result);
         setLoading(false);
     } catch (error) {
         console.error("DB failed to open", error);
     }
 };
 
+async function getLetters(setLetters: Function, setLoading: Function, lang_id:  number) {
+    try {
+        const db = await openLanguageDatabase();
+        const result = await db.getAllAsync("SELECT letter_id, letter_symbol, pronunciation, explanation FROM alphabet WHERE lang_id = ?;", [lang_id]);
+        setLetters(result);
+        setLoading(false);
+    } catch (error) {
+        console.error("DB failed to open", error);
+    }
+
+};
 export default function Alphabet(props : Props) {
 
-    const [languages, setLanguages] = useState<LangRowType[]>([]);
+    const [letters, setLetters] = useState<LetterRowType[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         if (props.isAlphabetVisible) {
             (async () => {
-                getInactiveLanguages(setLanguages, setLoading);
+                getLetters(setLetters, setLoading, props.langId);
             })();
         }
     }, [props.isAlphabetVisible]);
@@ -56,7 +70,7 @@ export default function Alphabet(props : Props) {
                 ) : (
                     <View style={styles.modalContentContainer}>
                         <View style={styles.modalTitleContainer}>
-                            <Text style={styles.modalTitle}>Select a language</Text>
+                            <Text style={styles.modalTitle}>Alphabet</Text>
                             <MaterialIcons
                                 name="close"
                                 size={22}
@@ -66,14 +80,8 @@ export default function Alphabet(props : Props) {
                             />
                         </View>
                         <ScrollView style={styles.scrollView}>
-                            {languages.map((item) => (
-                                <LanguageListItem
-                                    key={item.lang_id}
-                                    item={{ lang_id: item.lang_id, lang_name: item.lang_name }}
-                                    activeOnly={true}
-                                    setAlphabetVisibility={props.setAlphabetVisibility}
-                                    setActiveLoading={setLoading}
-                                />
+                            {letters.map((item) => (
+                                <AlphabetListItem key={item.letter_id} letterSymbol={item.letter_symbol} pronunciation={item.pronunciation} explanation={item.explanation}/>
                             ))}
                         </ScrollView>
                     </View>

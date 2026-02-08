@@ -7,6 +7,13 @@ export type LangRowType = {
     lang_level?:    number | null;
 };
 
+export type LetterRowType = {
+    letter_id:      number;
+    letter_symbol:  string;
+    pronunciation:  string;
+    explanation:    string;
+};
+
 export type WordRowType = {
     wordId:         number
     nativeWord:     string,

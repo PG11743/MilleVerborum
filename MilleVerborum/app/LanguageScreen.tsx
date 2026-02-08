@@ -32,6 +32,7 @@ export default function LanguageScreen() {
     const [loading, setLoading] = useState<boolean>(true);
     const [isModalVisible, setModalVisibility] = useState<boolean>(false);
     const [isAlphabetVisible, setAlphabetVisibility] = useState<boolean>(false);
+    const [langId, setLangId] = useState<number>(0);
 
     useFocusEffect(
         useCallback(() => {
@@ -65,7 +66,7 @@ export default function LanguageScreen() {
                                     entering={hasMounted.current ? ZoomIn : undefined}
                                     exiting={ZoomOut}
                                 >
-                                    <LanguageListItem key={item.lang_id} item={{lang_id: item.lang_id, lang_name: item.lang_name}} setActiveLoading={setLoading} setAlphabetVisibility={setAlphabetVisibility} activeOnly={true}/>
+                                    <LanguageListItem key={item.lang_id} item={{lang_id: item.lang_id, lang_name: item.lang_name}} setActiveLoading={setLoading} setAlphabetVisibility={setAlphabetVisibility} setLangId={setLangId} activeOnly={true}/>
                                 </Animated.View>
                             ))
                         }
@@ -109,6 +110,7 @@ export default function LanguageScreen() {
                     <Alphabet
                         isAlphabetVisible={isAlphabetVisible}
                         setAlphabetVisibility={setAlphabetVisibility}
+                        langId={langId}
                     />
                 <StatusBar translucent backgroundColor="transparent" />
             </GestureHandlerRootView>
