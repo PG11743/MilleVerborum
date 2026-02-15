@@ -1,0 +1,51 @@
+name: iOS Build
+on:
+  workflow_dispatch: # Allows you to run this manually from the Actions tab
+
+jobs:
+  build:
+    runs-on: macos-latest # This is the "Cloud Mac"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }} # Optional, but good for EAS
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Expo Prebuild
+        run: npx expo prebuild --platform ios
+
+      - name: Build with xcodebuild
+        run: |
+          xcodebuild -workspace ios/*.xcworkspace \
+            -scheme $(ls ios/*.xcodeproj | xargs basename -s .xcodeproj) \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_ENTITLEMENTS="" \
+            CODE_SIGNING_IDENTITY=""
+
+      - name: Package into .ipa
+        run: |
+          mkdir -p Payload
+          cp -R build/Build/Products/Release-iphoneos/*.app Payload/
+          zip -r build.ipa Payload
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-app
+          path: build.ipa
