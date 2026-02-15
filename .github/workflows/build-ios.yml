@@ -1,10 +1,10 @@
 name: iOS Build
 on:
-  workflow_dispatch: # Allows you to run this manually from the Actions tab
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: macos-latest # This is the "Cloud Mac"
+    runs-on: macos-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -12,13 +12,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20 # FIX 1: Upgraded from 18 to 20
 
       - name: Setup Expo
         uses: expo/expo-github-action@v8
         with:
-          expo-version: latest
-          token: ${{ secrets.EXPO_TOKEN }} # Optional, but good for EAS
+          # FIX 2: Removed 'expo-version: latest'. 
+          # We use 'eas-version' instead to avoid the old, broken global CLI.
+          eas-version: latest 
+          token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Install dependencies
         run: npm install
