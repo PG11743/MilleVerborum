@@ -44,37 +44,6 @@ export default function Index() {
                     </MaskedView>
                 </Pressable>
             </Link>
-            <Link href="/" asChild>
-                <Pressable style={styles.button}>
-                    <MaskedView
-                    style={{ flex: 1, flexDirection: 'row', height: '100%' }}
-                    maskElement={
-                        <View
-                            style={{
-                                // Transparent background because mask is based off alpha channel.
-                                backgroundColor: 'transparent',
-                                flex: 1,
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                            }}
-                        >
-                            <View
-                                style={{flexDirection: 'row'}}
-                            >
-                                <FontAwesome name="bar-chart" size={30} style={styles.buttonIcon} />
-                                <Text style={styles.buttonLabel}>Stats</Text>
-                            </View>
-                        </View>
-                    }
-                    >
-                        {/* Shows behind the mask, you can put anything here, such as an image */}
-                        <LinearGradient
-                            colors={['#00f9ff', '#7700ffff']}
-                            style={StyleSheet.absoluteFill}
-                        />
-                    </MaskedView>
-                </Pressable>
-            </Link>
         </View>
     );
 }
