@@ -12,7 +12,6 @@ import LanguageSelect from './LanguageSelect';
 import Alphabet from './alphabet';
 import MaskedView from '@react-native-masked-view/masked-view';
 
-const hasMounted = useRef(false);
 
 
 async function getActiveLanguages (setActiveLanguages : Function, setActiveLoading : Function) {
@@ -33,6 +32,8 @@ export default function LanguageScreen() {
     const [isModalVisible, setModalVisibility] = useState<boolean>(false);
     const [isAlphabetVisible, setAlphabetVisibility] = useState<boolean>(false);
     const [langId, setLangId] = useState<number>(0);
+    const hasMounted = useRef(false);
+
 
     useFocusEffect(
         useCallback(() => {
