@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS languages;
 DROP TABLE IF EXISTS words;
 DROP TABLE IF EXISTS alphabet;
+DROP TABLE IF EXISTS agreements;
 
 -- PRAGMA foreign_keys = ON;
 
@@ -34,6 +35,14 @@ CREATE TABLE IF NOT EXISTS alphabet (
     pronunciation   TEXT        NOT NULL,
     explanation     TEXT,
     FOREIGN KEY (lang_id) REFERENCES languages (lang_id)
+);
+
+CREATE TABLE IF NOT EXISTS agreements (
+    agreementID     INTEGER     PRIMARY KEY,
+    type            TEXT        NOT NULL,
+    version         INTEGER     NOT NULL,
+    accepted        TEXT        DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (type, version)
 );
 
 INSERT INTO languages (

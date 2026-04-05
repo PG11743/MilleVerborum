@@ -23,5 +23,9 @@ export type WordRowType = {
     failCount:      number
 };
 
+export type UserAgreement = {
+    counter:        number
+}
+
 
 export type StageMode = 'level' | 'fail' | 'practice' | 'train' | 'test' | 'promotion';

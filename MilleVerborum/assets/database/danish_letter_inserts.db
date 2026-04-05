@@ -24,6 +24,6 @@ INSERT INTO alphabet(lang_id, letter_symbol, pronunciation, explanation) VALUES 
 INSERT INTO alphabet(lang_id, letter_symbol, pronunciation, explanation) VALUES (1, 'X x', 'ks', 'Like "ks".');
 INSERT INTO alphabet(lang_id, letter_symbol, pronunciation, explanation) VALUES (1, 'Y y', 'ue', 'Say "ee" with rounded lips (sounds like "yoo").');
 INSERT INTO alphabet(lang_id, letter_symbol, pronunciation, explanation) VALUES (1, 'Z z', 's', 'Sounds like "s".');
-INSERT INTO alphabet(lang_id, letter_symbol, pronunciation, explanation) VALUES (1, 'AE ae', 'eh', 'The letter Æ; sounds like "e" in "bed".');
-INSERT INTO alphabet(lang_id, letter_symbol, pronunciation, explanation) VALUES (1, 'OE oe', 'eu', 'The letter Ø; like "i" in "bird" or "eu" in French.');
-INSERT INTO alphabet(lang_id, letter_symbol, pronunciation, explanation) VALUES (1, 'AA aa', 'aw', 'The letter Å; sounds like the "o" in "lord".');
+INSERT INTO alphabet(lang_id, letter_symbol, pronunciation, explanation) VALUES (1, 'Æ æ', 'eh', 'The letter Æ; sounds like "e" in "bed".');
+INSERT INTO alphabet(lang_id, letter_symbol, pronunciation, explanation) VALUES (1, 'Ø ø', 'eu', 'The letter Ø; like "i" in "bird" or "eu" in French.');
+INSERT INTO alphabet(lang_id, letter_symbol, pronunciation, explanation) VALUES (1, 'Å å', 'aw', 'The letter Å; sounds like the "o" in "lord".');
