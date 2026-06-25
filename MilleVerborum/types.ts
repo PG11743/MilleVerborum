@@ -23,6 +23,15 @@ export type WordRowType = {
     failCount:      number
 };
 
+export type WordRowTypeDB = {
+    word_id:        number,
+    native_word:    string,
+    foreign_word:   string,
+    pronunciation:  string,
+    corr_count:     number,
+    fail_count:     number
+};
+
 export type UserAgreement = {
     counter:        number
 }

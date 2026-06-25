@@ -6,9 +6,6 @@ type Props = {
     nativeText :        string;
     foreignText?:       string;
     pronunciation?:     string;
-    backgroundColour:   string;
-    textColour:         string;
-    borderColour:       string;
 };
 
 export default function Card (props : Props) {

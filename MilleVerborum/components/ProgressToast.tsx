@@ -54,7 +54,8 @@ const styles = StyleSheet.create({
         flex: 1,
         borderRadius: 100,
         borderWidth: 3,
-        borderColor: '#00f9ff'
+        borderColor: '#00f9ff',
+        zIndex: 1001
     },
     renderCardContainer: {
         flex: 1,
