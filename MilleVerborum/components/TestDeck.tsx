@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
     height: '100%'
   },
   overlayLabelContainer: {
-    borderRadius: 15,
+    borderRadius: 35,
     height: '85%',
     width: '90%',
   },

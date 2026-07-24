@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     overlayLabelContainer: {
-        borderRadius: 15,
+        borderRadius: 35,
         height: '85%',
         width: '90%',
     },
